@@ -13,14 +13,15 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
+from django.db import transaction
 from django.db.models import Count, Q
 from django.db.models.deletion import ProtectedError
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.views.decorators.vary import vary_on_headers
 
-from .forms import ClienteForm, ProjectoForm, ServicoForm
-from .models import Cliente, Projecto, Servico
+from .forms import ClienteForm, ProjectoForm, RenovacaoForm, ServicoForm
+from .models import Cliente, Projecto, Renovacao, Servico
 
 POR_PAGINA = 15
 
@@ -413,3 +414,35 @@ def servico_apagar(request, pk):
     return _apagar(
         request, servico, "Apagar serviço", aviso, f"/servicos/{servico.pk}/", "servico_lista"
     )
+
+
+@exigir(*EDITAR)
+def servico_renovar(request, pk):
+    servico = get_object_or_404(servicos_visiveis(request), pk=pk, estado=Servico.Estado.ACTIVO)
+    if request.method == "POST":
+        form = RenovacaoForm(request.POST, servico=servico)
+        if form.is_valid():
+            with transaction.atomic():
+                Renovacao.objects.create(
+                    servico=servico,
+                    data=form.cleaned_data["data"],
+                    valor=form.cleaned_data["valor"],
+                    nova_expiracao=form.cleaned_data["nova_expiracao"],
+                    utilizador=request.user,
+                )
+                servico.expira_em = form.cleaned_data["nova_expiracao"]
+                servico.save(update_fields=["expira_em"])
+            messages.success(request, "Renovação registada.")
+            resposta = redirect("servico_detalhe", pk=servico.pk)
+            if getattr(request, "htmx", None):
+                resposta["HX-Redirect"] = resposta["Location"]
+            return resposta
+    else:
+        proxima = servico.expira_em.replace(year=servico.expira_em.year + 1) if not (
+            servico.expira_em.month == 2 and servico.expira_em.day == 29
+        ) else servico.expira_em.replace(year=servico.expira_em.year + 1, day=28)
+        form = RenovacaoForm(
+            servico=servico,
+            initial={"data": timezone.localdate(), "valor": servico.preco_venda, "nova_expiracao": proxima},
+        )
+    return render(request, "servicos/_renovar.html", {"form": form, "servico": servico})

@@ -79,3 +79,19 @@ class ServicoForm(EstiloMixin, forms.ModelForm):
             if valor is not None and valor < 0:
                 self.add_error(nome, "O valor não pode ser negativo.")
         return dados
+
+
+class RenovacaoForm(forms.Form):
+    data = forms.DateField(label="Data da renovação", widget=forms.DateInput(attrs={"type": "date"}))
+    valor = forms.DecimalField(label="Valor cobrado (Kz)", max_digits=12, decimal_places=2, min_value=0)
+    nova_expiracao = forms.DateField(label="Nova expiração", widget=forms.DateInput(attrs={"type": "date"}))
+
+    def __init__(self, *args, servico=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.servico = servico
+
+    def clean_nova_expiracao(self):
+        nova = self.cleaned_data["nova_expiracao"]
+        if self.servico and nova <= self.servico.expira_em:
+            raise forms.ValidationError("Tem de ser posterior à expiração actual.")
+        return nova

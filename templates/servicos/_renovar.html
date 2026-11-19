@@ -1,0 +1,19 @@
+<form method="post" action="{% url 'servico_renovar' servico.pk %}"
+      hx-post="{% url 'servico_renovar' servico.pk %}" hx-target="this" hx-swap="outerHTML"
+      class="cartao mt-6 p-5">
+  {% csrf_token %}
+  <h2 class="rotulo">Registar renovação</h2>
+  <div class="mt-4 grid gap-4 sm:grid-cols-3">
+    {% for campo in form %}
+    <div>
+      <label for="{{ campo.id_for_label }}" class="text-sm text-muted">{{ campo.label }}</label>
+      <div class="mt-1">{{ campo }}</div>
+      {% for erro in campo.errors %}<p class="mt-1 text-sm text-red-500">{{ erro }}</p>{% endfor %}
+    </div>
+    {% endfor %}
+  </div>
+  <div class="mt-4 flex gap-2">
+    <button type="submit" class="btn">Confirmar renovação</button>
+    <a href="{% url 'servico_detalhe' servico.pk %}" class="btn">Cancelar</a>
+  </div>
+</form>

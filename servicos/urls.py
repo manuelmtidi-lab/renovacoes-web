@@ -17,5 +17,6 @@ urlpatterns = [
     path("servicos/novo/", crud.servico_novo, name="servico_novo"),
     path("servicos/<int:pk>/", crud.servico_detalhe, name="servico_detalhe"),
     path("servicos/<int:pk>/editar/", crud.servico_editar, name="servico_editar"),
+    path("servicos/<int:pk>/renovar/", crud.servico_renovar, name="servico_renovar"),
     path("servicos/<int:pk>/apagar/", crud.servico_apagar, name="servico_apagar"),
 ]
