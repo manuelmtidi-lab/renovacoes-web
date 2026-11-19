@@ -128,3 +128,9 @@ if "django_htmx" not in INSTALLED_APPS:
     INSTALLED_APPS = [*INSTALLED_APPS, "django_htmx"]
 if "django_htmx.middleware.HtmxMiddleware" not in MIDDLEWARE:
     MIDDLEWARE = [*MIDDLEWARE, "django_htmx.middleware.HtmxMiddleware"]
+
+# Email: consola em desenvolvimento; SMTP real em produção (definir no .env)
+EMAIL_BACKEND = config(
+    "EMAIL_BACKEND", default="django.core.mail.backends.console.EmailBackend"
+)
+DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL", default="Renovações <nao-responder@localhost>")
