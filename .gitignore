@@ -4,3 +4,5 @@ __pycache__/
 .venv/
 staticfiles/
 node_modules/
+.django_tailwind_cli/
+static/css/tailwind.css

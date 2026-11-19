@@ -116,3 +116,9 @@ SOCIALACCOUNT_PROVIDERS = {
         "AUTH_PARAMS": {"prompt": "select_account"},
     }
 }
+
+
+# --- Tailwind ---
+INSTALLED_APPS += ["django_tailwind_cli"]
+TAILWIND_CLI_SRC_CSS = "styles/input.css"
+TAILWIND_CLI_VERSION = "4.3.5"

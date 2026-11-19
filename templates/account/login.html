@@ -1,13 +1,41 @@
-{% load socialaccount %}
-<!doctype html>
+{% load socialaccount tailwind_cli %}<!doctype html>
 <html lang="pt">
-<head><meta charset="utf-8"><title>Entrar</title></head>
-<body>
-  <h1>Painel de renovações</h1>
-  {% for message in messages %}<p>{{ message }}</p>{% endfor %}
-  <form method="post" action="{% provider_login_url 'google' %}">
-    {% csrf_token %}
-    <button type="submit">Entrar com Google</button>
-  </form>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Entrar · Renovações</title>
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("tema");
+        var escuro = t ? t === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+        document.documentElement.classList.toggle("dark", escuro);
+      } catch (e) {}
+    })();
+  </script>
+  {% tailwind_css %}
+</head>
+<body class="min-h-screen bg-bg font-sans text-ink antialiased">
+  <div class="relative flex min-h-screen items-center justify-center overflow-hidden px-4">
+    <div class="pointer-events-none absolute -top-40 left-1/2 h-96 w-[40rem] -translate-x-1/2 rounded-full bg-accent-soft blur-3xl"></div>
+
+    <main class="animar-entrada relative w-full max-w-sm rounded-3xl border border-line bg-surface p-8 shadow-sm">
+      <span class="grid size-11 place-items-center rounded-2xl bg-accent text-lg font-bold text-accent-ink">R</span>
+      <h1 class="mt-6 text-2xl font-semibold tracking-tight">Painel de renovações</h1>
+      <p class="mt-2 text-sm text-muted">Domínios, hosting, SSL e contratos dos clientes, sempre à vista.</p>
+
+      {% for message in messages %}
+      <p class="mt-5 rounded-xl bg-danger-soft px-4 py-3 text-sm text-danger">{{ message }}</p>
+      {% endfor %}
+
+      <form method="post" action="{% provider_login_url 'google' %}" class="mt-6">
+        {% csrf_token %}
+        <button type="submit" class="flex h-11 w-full items-center justify-center rounded-xl bg-ink text-sm font-medium text-bg transition hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
+          Continuar com Google
+        </button>
+      </form>
+      <p class="mt-4 text-center text-xs text-muted">Acesso só para utilizadores registados pelo administrador.</p>
+    </main>
+  </div>
 </body>
 </html>

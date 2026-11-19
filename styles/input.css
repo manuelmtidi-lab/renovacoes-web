@@ -1,0 +1,89 @@
+@import "tailwindcss";
+
+@source "../templates";
+@source "../servicos";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@font-face {
+  font-family: "Geist";
+  src: url("/static/fonts/geist.woff2") format("woff2");
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+:root {
+  color-scheme: light;
+  --c-bg: oklch(0.975 0.004 90);
+  --c-surface: oklch(1 0 0);
+  --c-surface-2: oklch(0.962 0.005 90);
+  --c-line: oklch(0.91 0.006 90);
+  --c-ink: oklch(0.21 0.015 260);
+  --c-muted: oklch(0.5 0.015 260);
+  --c-accent: oklch(0.52 0.2 262);
+  --c-accent-soft: oklch(0.95 0.03 262);
+  --c-accent-ink: oklch(0.99 0 0);
+  --c-danger: oklch(0.55 0.21 25);
+  --c-danger-soft: oklch(0.95 0.035 25);
+  --c-warn: oklch(0.62 0.18 50);
+  --c-warn-soft: oklch(0.96 0.04 60);
+  --c-caution: oklch(0.55 0.12 85);
+  --c-caution-soft: oklch(0.96 0.06 95);
+  --c-ok: oklch(0.52 0.14 155);
+  --c-ok-soft: oklch(0.955 0.04 155);
+}
+
+.dark {
+  color-scheme: dark;
+  --c-bg: oklch(0.16 0.01 260);
+  --c-surface: oklch(0.2 0.012 260);
+  --c-surface-2: oklch(0.24 0.012 260);
+  --c-line: oklch(0.3 0.012 260);
+  --c-ink: oklch(0.96 0.004 260);
+  --c-muted: oklch(0.68 0.012 260);
+  --c-accent: oklch(0.7 0.16 262);
+  --c-accent-soft: oklch(0.3 0.06 262);
+  --c-accent-ink: oklch(0.16 0.01 260);
+  --c-danger: oklch(0.72 0.17 25);
+  --c-danger-soft: oklch(0.3 0.07 25);
+  --c-warn: oklch(0.76 0.15 60);
+  --c-warn-soft: oklch(0.31 0.06 55);
+  --c-caution: oklch(0.82 0.14 95);
+  --c-caution-soft: oklch(0.32 0.06 95);
+  --c-ok: oklch(0.77 0.15 155);
+  --c-ok-soft: oklch(0.3 0.06 155);
+}
+
+@theme inline {
+  --font-sans: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --color-bg: var(--c-bg);
+  --color-surface: var(--c-surface);
+  --color-surface-2: var(--c-surface-2);
+  --color-line: var(--c-line);
+  --color-ink: var(--c-ink);
+  --color-muted: var(--c-muted);
+  --color-accent: var(--c-accent);
+  --color-accent-soft: var(--c-accent-soft);
+  --color-accent-ink: var(--c-accent-ink);
+  --color-danger: var(--c-danger);
+  --color-danger-soft: var(--c-danger-soft);
+  --color-warn: var(--c-warn);
+  --color-warn-soft: var(--c-warn-soft);
+  --color-caution: var(--c-caution);
+  --color-caution-soft: var(--c-caution-soft);
+  --color-ok: var(--c-ok);
+  --color-ok-soft: var(--c-ok-soft);
+}
+
+@keyframes subir {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+@utility animar-entrada {
+  animation: subir 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animar-entrada { animation: none; }
+}

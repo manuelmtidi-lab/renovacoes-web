@@ -22,5 +22,13 @@ services:
       db:
         condition: service_healthy
 
+  tailwind:
+    build: .
+    command: python manage.py tailwind watch
+    volumes:
+      - .:/app
+    env_file: .env
+    tty: true
+
 volumes:
   pgdata:

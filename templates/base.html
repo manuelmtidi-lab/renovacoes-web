@@ -1,0 +1,100 @@
+{% load tailwind_cli %}<!doctype html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Painel{% endblock %} · Renovações</title>
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("tema");
+        var escuro = t ? t === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+        document.documentElement.classList.toggle("dark", escuro);
+      } catch (e) {}
+    })();
+  </script>
+  {% tailwind_css %}
+</head>
+<body class="min-h-screen bg-bg font-sans text-ink antialiased">
+  <div class="flex min-h-screen">
+
+    <aside class="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-line bg-surface px-4 py-6 lg:flex">
+      <a href="{% url 'inicio' %}" class="flex items-center gap-3 px-2">
+        <span class="grid size-9 place-items-center rounded-xl bg-accent text-sm font-bold text-accent-ink">R</span>
+        <span class="leading-tight">
+          <span class="block text-sm font-semibold">Renovações</span>
+          <span class="block text-xs text-muted">Contratos de clientes</span>
+        </span>
+      </a>
+
+      <nav class="mt-8 flex flex-col gap-1">
+        {% url 'inicio' as url_inicio %}
+        <a href="{{ url_inicio }}" class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition-colors {% if request.path == url_inicio %}bg-accent-soft text-accent{% else %}text-muted hover:bg-surface-2 hover:text-ink{% endif %}">
+          {% include "components/icon.html" with nome="painel" classe="size-[18px]" %} Painel
+        </a>
+        {% if user.is_staff %}
+        <a href="{% url 'admin:index' %}" class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-muted transition-colors hover:bg-surface-2 hover:text-ink">
+          {% include "components/icon.html" with nome="escudo" classe="size-[18px]" %} Administração
+        </a>
+        {% endif %}
+      </nav>
+
+      <div class="mt-auto border-t border-line pt-4">
+        <div class="flex items-center gap-3 px-2">
+          <span class="grid size-9 place-items-center rounded-full bg-surface-2 text-sm font-semibold">{{ user.username|first|upper }}</span>
+          <div class="min-w-0 leading-tight">
+            <p class="truncate text-sm font-medium">{{ user.get_full_name|default:user.username }}</p>
+            <p class="truncate text-xs text-muted">{% with g=user.groups.first %}{{ g.name|default:"Sem perfil" }}{% endwith %}</p>
+          </div>
+        </div>
+        <div class="mt-3 flex gap-2">
+          <button type="button" data-tema class="grid size-9 place-items-center rounded-xl border border-line text-muted transition-colors hover:bg-surface-2 hover:text-ink" aria-label="Alternar tema">
+            <span class="dark:hidden">{% include "components/icon.html" with nome="lua" classe="size-[18px]" %}</span>
+            <span class="hidden dark:inline">{% include "components/icon.html" with nome="sol" classe="size-[18px]" %}</span>
+          </button>
+          <form method="post" action="{% url 'account_logout' %}" class="flex-1">
+            {% csrf_token %}
+            <button class="flex h-9 w-full items-center justify-center gap-2 rounded-xl border border-line text-sm font-medium text-muted transition-colors hover:bg-surface-2 hover:text-ink">
+              {% include "components/icon.html" with nome="sair" classe="size-4" %} Sair
+            </button>
+          </form>
+        </div>
+      </div>
+    </aside>
+
+    <div class="flex min-w-0 flex-1 flex-col">
+      <header class="sticky top-0 z-10 flex items-center justify-between border-b border-line bg-surface/90 px-4 py-3 backdrop-blur lg:hidden">
+        <a href="{% url 'inicio' %}" class="flex items-center gap-2.5">
+          <span class="grid size-8 place-items-center rounded-lg bg-accent text-sm font-bold text-accent-ink">R</span>
+          <span class="text-sm font-semibold">Renovações</span>
+        </a>
+        <div class="flex items-center gap-2">
+          <button type="button" data-tema class="grid size-9 place-items-center rounded-xl border border-line text-muted" aria-label="Alternar tema">
+            <span class="dark:hidden">{% include "components/icon.html" with nome="lua" classe="size-[18px]" %}</span>
+            <span class="hidden dark:inline">{% include "components/icon.html" with nome="sol" classe="size-[18px]" %}</span>
+          </button>
+          <form method="post" action="{% url 'account_logout' %}">
+            {% csrf_token %}
+            <button class="grid size-9 place-items-center rounded-xl border border-line text-muted" aria-label="Sair">
+              {% include "components/icon.html" with nome="sair" classe="size-[18px]" %}
+            </button>
+          </form>
+        </div>
+      </header>
+
+      <main class="mx-auto w-full max-w-6xl flex-1 px-4 pb-12 pt-6 lg:px-10 lg:pt-10">
+        {% block content %}{% endblock %}
+      </main>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("click", function (e) {
+      var b = e.target.closest("[data-tema]");
+      if (!b) return;
+      var escuro = document.documentElement.classList.toggle("dark");
+      try { localStorage.setItem("tema", escuro ? "dark" : "light"); } catch (err) {}
+    });
+  </script>
+</body>
+</html>
