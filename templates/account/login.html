@@ -1,0 +1,13 @@
+{% load socialaccount %}
+<!doctype html>
+<html lang="pt">
+<head><meta charset="utf-8"><title>Entrar</title></head>
+<body>
+  <h1>Painel de renovações</h1>
+  {% for message in messages %}<p>{{ message }}</p>{% endfor %}
+  <form method="post" action="{% provider_login_url 'google' %}">
+    {% csrf_token %}
+    <button type="submit">Entrar com Google</button>
+  </form>
+</body>
+</html>

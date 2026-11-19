@@ -1,0 +1,9 @@
+<!doctype html>
+<html lang="pt">
+<head><meta charset="utf-8"><title>Renovações</title></head>
+<body>
+  <h1>Olá, {{ request.user.get_full_name|default:request.user.username }}</h1>
+  <p>Perfis: {% for g in request.user.groups.all %}{{ g.name }}{% if not forloop.last %}, {% endif %}{% empty %}nenhum{% endfor %}</p>
+  <form method="post" action="{% url 'account_logout' %}">{% csrf_token %}<button>Sair</button></form>
+</body>
+</html>

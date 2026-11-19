@@ -3,3 +3,4 @@ psycopg[binary]
 python-decouple
 gunicorn
 whitenoise
+django-allauth[socialaccount]
