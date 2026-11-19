@@ -1,0 +1,57 @@
+{# Parâmetro: servicos (lista de serviços com projecto e cliente carregados) #}
+<div class="cartao sem-brilho hidden md:block">
+  <table class="w-full text-left text-sm">
+    <thead class="border-b border-line bg-surface-2">
+      <tr>
+        <th class="rotulo px-5 py-2.5">Serviço</th>
+        <th class="rotulo px-5 py-2.5">Fornecedor</th>
+        <th class="rotulo px-5 py-2.5">Expira</th>
+        <th class="rotulo px-5 py-2.5">Estado</th>
+        <th class="rotulo px-5 py-2.5 text-right">Preço</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-line">
+      {% for s in servicos %}
+      <tr class="linha">
+        <td class="px-5 py-3">
+          <a href="{% url 'servico_detalhe' s.pk %}" class="font-bold transition-colors hover:text-accent">{{ s.get_tipo_display }}</a>
+          <p class="text-muted">{{ s.projecto.nome }} · {{ s.projecto.cliente.nome }}</p>
+        </td>
+        <td class="px-5 py-3 text-muted">{{ s.fornecedor|default:"—" }}</td>
+        <td class="px-5 py-3">
+          <p class="tabular-nums">{{ s.expira_em|date:"d/m/Y" }}</p>
+          {% if s.estado == "activo" %}
+          <p class="text-muted">{% if s.dias_para_expirar < 0 %}{% with n=s.dias_para_expirar|cut:"-" %}há {{ n }} dia{{ n|pluralize }}{% endwith %}{% elif s.dias_para_expirar == 0 %}hoje{% else %}em {{ s.dias_para_expirar }} dia{{ s.dias_para_expirar|pluralize }}{% endif %}</p>
+          <span class="barra-dias" data-estado="{{ s.estado_alerta }}" style="--d: {{ s.dias_para_expirar }}" aria-hidden="true"><i></i></span>
+          {% endif %}
+        </td>
+        <td class="px-5 py-3">
+          {% if s.estado == "activo" %}{% include "components/badge.html" with estado=s.estado_alerta %}{% else %}<span class="tag">Cancelado</span>{% endif %}
+        </td>
+        <td class="px-5 py-3 text-right font-bold tabular-nums">{{ s.preco_venda|floatformat:"0g" }} Kz</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<ul class="space-y-3 md:hidden">
+  {% for s in servicos %}
+  <li class="cartao p-4">
+    <div class="flex items-start justify-between gap-3 pr-3">
+      <div class="min-w-0">
+        <a href="{% url 'servico_detalhe' s.pk %}" class="font-bold">{{ s.get_tipo_display }}</a>
+        <p class="truncate text-sm text-muted">{{ s.projecto.nome }} · {{ s.projecto.cliente.nome }}</p>
+      </div>
+      {% if s.estado == "activo" %}{% include "components/badge.html" with estado=s.estado_alerta %}{% else %}<span class="tag">Cancelado</span>{% endif %}
+    </div>
+    <div class="mt-3 flex items-end justify-between text-sm">
+      <div>
+        <span class="text-muted tabular-nums">{{ s.expira_em|date:"d/m/Y" }}</span>
+        {% if s.estado == "activo" %}<span class="barra-dias" data-estado="{{ s.estado_alerta }}" style="--d: {{ s.dias_para_expirar }}" aria-hidden="true"><i></i></span>{% endif %}
+      </div>
+      <span class="font-bold tabular-nums">{{ s.preco_venda|floatformat:"0g" }} Kz</span>
+    </div>
+  </li>
+  {% endfor %}
+</ul>

@@ -1,0 +1,10 @@
+{% if pagina.object_list %}
+<p class="mb-3 text-sm text-muted">{{ pagina.paginator.count }} serviço{{ pagina.paginator.count|pluralize }}</p>
+{% include "servicos/_lista.html" with servicos=pagina.object_list %}
+{% include "components/pager.html" %}
+{% else %}
+<div class="border border-dashed border-line bg-surface p-10 text-center">
+  <p class="font-bold">Nenhum serviço encontrado</p>
+  <p class="mt-1 text-sm text-muted">Mude ou limpe os filtros{% if pode_editar %}, ou crie um novo serviço{% endif %}.</p>
+</div>
+{% endif %}

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Clientes{% endblock %}
+
+{% block content %}
+<div class="flex flex-wrap items-end justify-between gap-4 animar-entrada">
+  <div>
+    <h1 class="text-2xl font-bold tracking-tight sm:text-3xl">Clientes</h1>
+    <p class="mt-1 text-muted">Empresas e pessoas a quem presta serviços.</p>
+  </div>
+  {% if pode_editar %}
+  <a href="{% url 'cliente_novo' %}" class="btn btn-primario">{% include "components/icone_extra.html" with nome="mais" classe="size-4" %} Novo cliente</a>
+  {% endif %}
+</div>
+
+<form class="mt-6 flex flex-wrap items-end gap-3" hx-get="{% url 'cliente_lista' %}" hx-target="#resultados" hx-push-url="true" hx-sync="this:replace" hx-indicator="#resultados" hx-trigger="input changed delay:300ms, submit">
+  <label class="block w-full sm:max-w-sm">
+    <span class="rotulo">Pesquisar</span>
+    <input type="search" name="q" value="{{ q }}" placeholder="Nome, email ou telefone" class="campo mt-1.5" autocomplete="off">
+  </label>
+  <a href="{% url 'cliente_lista' %}" class="btn">Limpar</a>
+</form>
+
+<div id="resultados" class="mt-6">
+  {% include "clientes/_tabela.html" %}
+</div>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% if pagina.object_list %}
+<p class="mb-3 text-sm text-muted">{{ pagina.paginator.count }} cliente{{ pagina.paginator.count|pluralize }}</p>
+<div class="cartao sem-brilho overflow-x-auto">
+  <table class="w-full text-left text-sm">
+    <thead class="border-b border-line bg-surface-2">
+      <tr>
+        <th class="rotulo px-5 py-2.5">Cliente</th>
+        <th class="rotulo px-5 py-2.5">Contacto</th>
+        <th class="rotulo px-5 py-2.5 text-right">Projectos</th>
+        <th class="rotulo px-5 py-2.5 text-right">Serviços</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-line">
+      {% for c in pagina.object_list %}
+      <tr class="linha">
+        <td class="px-5 py-3"><a href="{% url 'cliente_detalhe' c.pk %}" class="font-bold transition-colors hover:text-accent">{{ c.nome }}</a></td>
+        <td class="px-5 py-3 text-muted">{{ c.email|default:"—" }}{% if c.telefone %}<br>{{ c.telefone }}{% endif %}</td>
+        <td class="px-5 py-3 text-right tabular-nums">{{ c.n_proj }}</td>
+        <td class="px-5 py-3 text-right tabular-nums">{{ c.n_serv }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% include "components/pager.html" %}
+{% else %}
+<div class="border border-dashed border-line bg-surface p-10 text-center">
+  <p class="font-bold">Nenhum cliente encontrado</p>
+  <p class="mt-1 text-sm text-muted">Altere a pesquisa{% if pode_editar %}, ou crie um novo cliente{% endif %}.</p>
+</div>
+{% endif %}

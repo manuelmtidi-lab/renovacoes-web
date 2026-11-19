@@ -1,0 +1,36 @@
+{% if pagina.object_list %}
+<p class="mb-3 text-sm text-muted">{{ pagina.paginator.count }} projecto{{ pagina.paginator.count|pluralize }}</p>
+<div class="cartao sem-brilho overflow-x-auto">
+  <table class="w-full text-left text-sm">
+    <thead class="border-b border-line bg-surface-2">
+      <tr>
+        <th class="rotulo px-5 py-2.5">Projecto</th>
+        <th class="rotulo px-5 py-2.5">Cliente</th>
+        <th class="rotulo px-5 py-2.5">Técnico</th>
+        <th class="rotulo px-5 py-2.5">Estado</th>
+        <th class="rotulo px-5 py-2.5 text-right">Serviços</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-line">
+      {% for p in pagina.object_list %}
+      <tr class="linha">
+        <td class="px-5 py-3">
+          <a href="{% url 'projecto_detalhe' p.pk %}" class="font-bold transition-colors hover:text-accent">{{ p.nome }}</a>
+          {% if p.url %}<p class="text-muted">{{ p.url }}</p>{% endif %}
+        </td>
+        <td class="px-5 py-3"><a href="{% url 'cliente_detalhe' p.cliente.pk %}" class="text-muted transition-colors hover:text-accent">{{ p.cliente.nome }}</a></td>
+        <td class="px-5 py-3 text-muted">{% if p.tecnico %}{{ p.tecnico.get_full_name|default:p.tecnico.username }}{% else %}—{% endif %}</td>
+        <td class="px-5 py-3"><span class="tag" data-tom="{% if p.estado == 'activo' %}ok{% elif p.estado == 'pausado' %}aviso{% endif %}">{{ p.get_estado_display }}</span></td>
+        <td class="px-5 py-3 text-right tabular-nums">{{ p.n_serv }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% include "components/pager.html" %}
+{% else %}
+<div class="border border-dashed border-line bg-surface p-10 text-center">
+  <p class="font-bold">Nenhum projecto encontrado</p>
+  <p class="mt-1 text-sm text-muted">Mude ou limpe os filtros{% if pode_editar %}, ou crie um novo projecto{% endif %}.</p>
+</div>
+{% endif %}

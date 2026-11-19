@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}{{ projecto.nome }}{% endblock %}
+
+{% block content %}
+<div class="animar-entrada">
+  <a href="{% url 'projecto_lista' %}" class="text-sm text-muted transition-colors hover:text-ink">Projectos</a>
+  <div class="mt-2 flex flex-wrap items-start justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-bold tracking-tight sm:text-3xl">{{ projecto.nome }}</h1>
+      <p class="mt-1 text-muted">de <a href="{% url 'cliente_detalhe' projecto.cliente.pk %}" class="hover:text-accent">{{ projecto.cliente.nome }}</a></p>
+    </div>
+    <div class="flex flex-wrap gap-2">
+      {% if pode_editar %}
+      <a href="{% url 'servico_novo' %}?projecto={{ projecto.pk }}" class="btn btn-primario">{% include "components/icone_extra.html" with nome="mais" classe="size-4" %} Novo serviço</a>
+      <a href="{% url 'projecto_editar' projecto.pk %}" class="btn">{% include "components/icone_extra.html" with nome="editar" classe="size-4" %} Editar</a>
+      {% endif %}
+      {% if pode_apagar %}<a href="{% url 'projecto_apagar' projecto.pk %}" class="btn btn-perigo">{% include "components/icone_extra.html" with nome="apagar" classe="size-4" %} Apagar</a>{% endif %}
+    </div>
+  </div>
+</div>
+
+<section class="cartao mt-6 p-5">
+  <h2 class="rotulo">Detalhes</h2>
+  <dl class="mt-3 divide-y divide-line text-sm">
+    <div class="flex justify-between gap-4 py-2.5"><dt class="text-muted">Estado</dt><dd><span class="tag" data-tom="{% if projecto.estado == 'activo' %}ok{% elif projecto.estado == 'pausado' %}aviso{% endif %}">{{ projecto.get_estado_display }}</span></dd></div>
+    <div class="flex justify-between gap-4 py-2.5"><dt class="text-muted">Endereço</dt><dd class="text-right font-medium">{% if projecto.url %}<a href="{{ projecto.url }}" target="_blank" rel="noopener noreferrer" class="hover:text-accent">{{ projecto.url }}</a>{% else %}—{% endif %}</dd></div>
+    <div class="flex justify-between gap-4 py-2.5"><dt class="text-muted">Técnico responsável</dt><dd class="text-right font-medium">{% if projecto.tecnico %}{{ projecto.tecnico.get_full_name|default:projecto.tecnico.username }}{% else %}—{% endif %}</dd></div>
+  </dl>
+</section>
+
+<section class="mt-10">
+  <h2 class="text-lg font-bold tracking-tight">Serviços</h2>
+  <div class="mt-4">
+    {% if servicos %}{% include "servicos/_lista.html" %}{% else %}
+    <div class="border border-dashed border-line bg-surface p-8 text-center">
+      <p class="font-bold">Sem serviços</p>
+      <p class="mt-1 text-sm text-muted">Domínio, hosting e certificado deste projecto aparecem aqui.</p>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

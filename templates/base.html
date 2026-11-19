@@ -15,8 +15,10 @@
   </script>
   {% tailwind_css %}
   <link rel="stylesheet" href="{% static 'css/efeitos.css' %}">
+  <link rel="stylesheet" href="{% static 'css/crud.css' %}">
+  <script src="{% static 'js/htmx.min.js' %}" defer></script>
 </head>
-<body class="min-h-screen bg-bg font-sans text-ink antialiased">
+<body class="min-h-screen bg-bg font-sans text-ink antialiased" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
   <div class="flex min-h-screen">
 
     <aside class="vt-lateral sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-line bg-surface px-4 py-6 lg:flex">
@@ -33,6 +35,18 @@
         <a href="{{ url_inicio }}" class="nav-item" {% if request.path == url_inicio %}aria-current="page"{% endif %}>
           {% include "components/icon.html" with nome="painel" classe="size-[18px]" %} Painel
         </a>
+        {# nav-crud #}
+        {% with rota=request.resolver_match.url_name|default:"" %}
+        <a href="{% url 'cliente_lista' %}" class="nav-item" {% if 'cliente' in rota %}aria-current="page"{% endif %}>
+          {% include "components/icone_extra.html" with nome="clientes" classe="size-[18px]" %} Clientes
+        </a>
+        <a href="{% url 'projecto_lista' %}" class="nav-item" {% if 'projecto' in rota %}aria-current="page"{% endif %}>
+          {% include "components/icone_extra.html" with nome="projectos" classe="size-[18px]" %} Projectos
+        </a>
+        <a href="{% url 'servico_lista' %}" class="nav-item" {% if 'servico' in rota %}aria-current="page"{% endif %}>
+          {% include "components/icone_extra.html" with nome="servicos" classe="size-[18px]" %} Serviços
+        </a>
+        {% endwith %}
         {% if user.is_staff %}
         <a href="{% url 'admin:index' %}" class="nav-item">
           {% include "components/icon.html" with nome="escudo" classe="size-[18px]" %} Administração
@@ -83,7 +97,9 @@
         </div>
       </header>
 
-      <main class="mx-auto w-full max-w-6xl flex-1 px-4 pb-12 pt-6 lg:px-10 lg:pt-10">
+      <main class="mx-auto w-full max-w-6xl flex-1 px-4 pb-24 pt-6 lg:px-10 lg:pb-12 lg:pt-10">
+        {# mensagens #}
+        {% if messages %}<div role="status">{% for m in messages %}<p class="msg" data-tipo="{{ m.level_tag }}">{{ m }}</p>{% endfor %}</div>{% endif %}
         {% block content %}{% endblock %}
       </main>
     </div>
@@ -97,6 +113,23 @@
       try { localStorage.setItem("tema", escuro ? "dark" : "light"); } catch (err) {}
     });
   </script>
+  {# nav-movel #}
+  <nav class="fixed inset-x-0 bottom-0 z-20 grid grid-cols-4 border-t border-line bg-surface/95 backdrop-blur lg:hidden" aria-label="Navegação principal">
+    {% with rota=request.resolver_match.url_name|default:"" %}
+    <a href="{% url 'inicio' %}" class="flex flex-col items-center gap-1 py-2.5 text-[11px] font-medium text-muted aria-[current=page]:text-accent" {% if rota == 'inicio' %}aria-current="page"{% endif %}>
+      {% include "components/icon.html" with nome="painel" classe="size-5" %} Painel
+    </a>
+    <a href="{% url 'cliente_lista' %}" class="flex flex-col items-center gap-1 py-2.5 text-[11px] font-medium text-muted aria-[current=page]:text-accent" {% if 'cliente' in rota %}aria-current="page"{% endif %}>
+      {% include "components/icone_extra.html" with nome="clientes" classe="size-5" %} Clientes
+    </a>
+    <a href="{% url 'projecto_lista' %}" class="flex flex-col items-center gap-1 py-2.5 text-[11px] font-medium text-muted aria-[current=page]:text-accent" {% if 'projecto' in rota %}aria-current="page"{% endif %}>
+      {% include "components/icone_extra.html" with nome="projectos" classe="size-5" %} Projectos
+    </a>
+    <a href="{% url 'servico_lista' %}" class="flex flex-col items-center gap-1 py-2.5 text-[11px] font-medium text-muted aria-[current=page]:text-accent" {% if 'servico' in rota %}aria-current="page"{% endif %}>
+      {% include "components/icone_extra.html" with nome="servicos" classe="size-5" %} Serviços
+    </a>
+    {% endwith %}
+  </nav>
   <script src="{% static 'js/painel.js' %}" defer></script>
 </body>
 </html>

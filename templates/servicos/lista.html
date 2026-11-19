@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Serviços{% endblock %}
+
+{% block content %}
+<div class="flex flex-wrap items-end justify-between gap-4 animar-entrada">
+  <div>
+    <h1 class="text-2xl font-bold tracking-tight sm:text-3xl">Serviços</h1>
+    <p class="mt-1 text-muted">Domínios, hosting, certificados, manutenção e licenças.</p>
+  </div>
+  {% if pode_editar %}
+  <a href="{% url 'servico_novo' %}" class="btn btn-primario">{% include "components/icone_extra.html" with nome="mais" classe="size-4" %} Novo serviço</a>
+  {% endif %}
+</div>
+
+<form class="mt-6" hx-get="{% url 'servico_lista' %}" hx-target="#resultados" hx-push-url="true" hx-sync="this:replace" hx-indicator="#resultados" hx-trigger="input changed delay:300ms, change[target.tagName=='SELECT'], submit">
+  <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+    <label class="block sm:col-span-2 lg:col-span-1">
+      <span class="rotulo">Pesquisar</span>
+      <input type="search" name="q" value="{{ q }}" placeholder="Projecto, cliente, fornecedor" class="campo mt-1.5" autocomplete="off">
+    </label>
+    <label class="block">
+      <span class="rotulo">Tipo</span>
+      <select name="tipo" class="campo mt-1.5">
+        <option value="">Todos</option>
+        {% for valor, nome in tipos %}<option value="{{ valor }}" {% if valor == tipo_sel %}selected{% endif %}>{{ nome }}</option>{% endfor %}
+      </select>
+    </label>
+    <label class="block">
+      <span class="rotulo">Estado do serviço</span>
+      <select name="estado" class="campo mt-1.5">
+        <option value="">Todos</option>
+        {% for valor, nome in estados %}<option value="{{ valor }}" {% if valor == estado_sel %}selected{% endif %}>{{ nome }}</option>{% endfor %}
+      </select>
+    </label>
+    <label class="block">
+      <span class="rotulo">Prazo</span>
+      <select name="alerta" class="campo mt-1.5">
+        <option value="">Todos</option>
+        {% for valor, nome in alertas %}<option value="{{ valor }}" {% if valor == alerta_sel %}selected{% endif %}>{{ nome }}</option>{% endfor %}
+      </select>
+    </label>
+    <label class="block">
+      <span class="rotulo">Cliente</span>
+      <select name="cliente" class="campo mt-1.5">
+        <option value="">Todos</option>
+        {% for c in clientes %}<option value="{{ c.pk }}" {% if c.pk == cliente_sel %}selected{% endif %}>{{ c.nome }}</option>{% endfor %}
+      </select>
+    </label>
+  </div>
+  <a href="{% url 'servico_lista' %}" class="btn mt-3">Limpar filtros</a>
+</form>
+
+<div id="resultados" class="mt-6">
+  {% include "servicos/_tabela.html" %}
+</div>
+{% endblock %}

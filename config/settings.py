@@ -122,3 +122,9 @@ SOCIALACCOUNT_PROVIDERS = {
 INSTALLED_APPS += ["django_tailwind_cli"]
 TAILWIND_CLI_SRC_CSS = "styles/input.css"
 TAILWIND_CLI_VERSION = "4.3.5"
+
+# --- CRUD e HTMX ---
+if "django_htmx" not in INSTALLED_APPS:
+    INSTALLED_APPS = [*INSTALLED_APPS, "django_htmx"]
+if "django_htmx.middleware.HtmxMiddleware" not in MIDDLEWARE:
+    MIDDLEWARE = [*MIDDLEWARE, "django_htmx.middleware.HtmxMiddleware"]

@@ -1,0 +1,14 @@
+{# Parâmetros: pagina, qs (filtros sem page) #}
+{% if pagina.paginator.num_pages > 1 %}
+<nav class="mt-4 flex items-center justify-between gap-3 text-sm" aria-label="Paginação">
+  <p class="text-muted">Página {{ pagina.number }} de {{ pagina.paginator.num_pages }}</p>
+  <div class="flex gap-2">
+    {% if pagina.has_previous %}
+    <a class="btn" href="?{{ qs }}{% if qs %}&amp;{% endif %}page={{ pagina.previous_page_number }}" hx-get="?{{ qs }}{% if qs %}&amp;{% endif %}page={{ pagina.previous_page_number }}" hx-target="#resultados" hx-push-url="true">Anterior</a>
+    {% endif %}
+    {% if pagina.has_next %}
+    <a class="btn" href="?{{ qs }}{% if qs %}&amp;{% endif %}page={{ pagina.next_page_number }}" hx-get="?{{ qs }}{% if qs %}&amp;{% endif %}page={{ pagina.next_page_number }}" hx-target="#resultados" hx-push-url="true">Seguinte</a>
+    {% endif %}
+  </div>
+</nav>
+{% endif %}

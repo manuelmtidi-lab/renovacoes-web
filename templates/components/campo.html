@@ -1,0 +1,5 @@
+{# Parâmetro: campo (um campo de formulário) #}
+<label for="{{ campo.id_for_label }}" class="rotulo">{{ campo.label }}</label>
+<div class="mt-1.5">{{ campo }}</div>
+{% if campo.help_text %}<p class="mt-1 text-xs text-muted">{{ campo.help_text }}</p>{% endif %}
+{% for erro in campo.errors %}<p class="mt-1 text-sm text-danger">{{ erro }}</p>{% endfor %}

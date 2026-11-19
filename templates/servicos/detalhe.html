@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}{{ servico.get_tipo_display }} · {{ servico.projecto.nome }}{% endblock %}
+
+{% block content %}
+<div class="animar-entrada">
+  <a href="{% url 'servico_lista' %}" class="text-sm text-muted transition-colors hover:text-ink">Serviços</a>
+  <div class="mt-2 flex flex-wrap items-start justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-bold tracking-tight sm:text-3xl">{{ servico.get_tipo_display }}</h1>
+      <p class="mt-1 text-muted">
+        <a href="{% url 'projecto_detalhe' servico.projecto.pk %}" class="hover:text-accent">{{ servico.projecto.nome }}</a>
+        de <a href="{% url 'cliente_detalhe' servico.projecto.cliente.pk %}" class="hover:text-accent">{{ servico.projecto.cliente.nome }}</a>
+      </p>
+    </div>
+    <div class="flex flex-wrap gap-2">
+      {% if pode_editar %}<a href="{% url 'servico_editar' servico.pk %}" class="btn">{% include "components/icone_extra.html" with nome="editar" classe="size-4" %} Editar</a>{% endif %}
+      {% if pode_apagar %}<a href="{% url 'servico_apagar' servico.pk %}" class="btn btn-perigo">{% include "components/icone_extra.html" with nome="apagar" classe="size-4" %} Apagar</a>{% endif %}
+    </div>
+  </div>
+</div>
+
+<section class="mt-8 grid gap-4 md:grid-cols-2">
+  <article class="cartao p-5">
+    <h2 class="rotulo">Contrato</h2>
+    <dl class="mt-3 divide-y divide-line text-sm">
+      <div class="flex justify-between gap-4 py-2.5"><dt class="text-muted">Estado</dt><dd>{% if servico.estado == "activo" %}{% include "components/badge.html" with estado=servico.estado_alerta %}{% else %}<span class="tag">Cancelado</span>{% endif %}</dd></div>
+      <div class="flex justify-between gap-4 py-2.5"><dt class="text-muted">Fornecedor</dt><dd class="text-right font-medium">{{ servico.fornecedor|default:"—" }}</dd></div>
+      <div class="flex justify-between gap-4 py-2.5"><dt class="text-muted">Início</dt><dd class="font-medium tabular-nums">{{ servico.inicio|date:"d/m/Y" }}</dd></div>
+      <div class="flex justify-between gap-4 py-2.5"><dt class="text-muted">Expira em</dt><dd class="font-medium tabular-nums">{{ servico.expira_em|date:"d/m/Y" }}</dd></div>
+      {% if servico.estado == "activo" %}
+      <div class="flex justify-between gap-4 py-2.5"><dt class="text-muted">Faltam</dt><dd class="font-medium">{% if servico.dias_para_expirar < 0 %}{% with n=servico.dias_para_expirar|cut:"-" %}expirou há {{ n }} dia{{ n|pluralize }}{% endwith %}{% elif servico.dias_para_expirar == 0 %}expira hoje{% else %}{{ servico.dias_para_expirar }} dia{{ servico.dias_para_expirar|pluralize }}{% endif %}</dd></div>
+      {% endif %}
+    </dl>
+  </article>
+  <article class="cartao p-5">
+    <h2 class="rotulo">Valores</h2>
+    <dl class="mt-3 divide-y divide-line text-sm">
+      <div class="flex justify-between gap-4 py-2.5"><dt class="text-muted">Custo</dt><dd class="font-medium tabular-nums">{{ servico.custo|floatformat:"0g" }} Kz</dd></div>
+      <div class="flex justify-between gap-4 py-2.5"><dt class="text-muted">Preço de venda</dt><dd class="font-medium tabular-nums">{{ servico.preco_venda|floatformat:"0g" }} Kz</dd></div>
+      <div class="flex justify-between gap-4 py-2.5"><dt class="text-muted">Margem</dt><dd class="font-bold tabular-nums">{{ servico.margem|floatformat:"0g" }} Kz</dd></div>
+    </dl>
+  </article>
+</section>
+
+<section class="mt-10">
+  <h2 class="text-lg font-bold tracking-tight">Histórico de renovações</h2>
+  {% if renovacoes %}
+  <div class="cartao sem-brilho mt-4 overflow-x-auto">
+    <table class="w-full text-left text-sm">
+      <thead class="border-b border-line bg-surface-2">
+        <tr>
+          <th class="rotulo px-5 py-2.5">Data</th>
+          <th class="rotulo px-5 py-2.5">Nova expiração</th>
+          <th class="rotulo px-5 py-2.5">Registada por</th>
+          <th class="rotulo px-5 py-2.5 text-right">Valor</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-line">
+        {% for r in renovacoes %}
+        <tr class="linha">
+          <td class="px-5 py-3 tabular-nums">{{ r.data|date:"d/m/Y" }}</td>
+          <td class="px-5 py-3 tabular-nums">{{ r.nova_expiracao|date:"d/m/Y" }}</td>
+          <td class="px-5 py-3 text-muted">{% if r.utilizador %}{{ r.utilizador.get_full_name|default:r.utilizador.username }}{% else %}—{% endif %}</td>
+          <td class="px-5 py-3 text-right font-bold tabular-nums">{{ r.valor|floatformat:"0g" }} Kz</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="mt-4 border border-dashed border-line bg-surface p-8 text-center">
+    <p class="font-bold">Ainda sem renovações registadas</p>
+    <p class="mt-1 text-sm text-muted">Quando este serviço for renovado, o histórico aparece aqui.</p>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}
