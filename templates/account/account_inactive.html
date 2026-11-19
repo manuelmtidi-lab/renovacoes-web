@@ -1,0 +1,8 @@
+{% extends "account/entrada_base.html" %}
+{% block title %}Conta a aguardar aprovação{% endblock %}
+
+{% block corpo %}
+<h1 class="entra mt-8 text-3xl font-bold tracking-tight" style="--i: 1">Conta a aguardar aprovação</h1>
+<p class="entra mt-3 text-sm text-muted" style="--i: 2">O seu acesso ainda não está activo. Quando um administrador aprovar a conta, poderá entrar com este email e palavra-passe.</p>
+<a href="{% url 'account_login' %}" class="entra mt-8 flex h-11 w-full items-center justify-center border border-line text-sm font-semibold transition-colors hover:bg-surface-2" style="--i: 3">Voltar ao início de sessão</a>
+{% endblock %}

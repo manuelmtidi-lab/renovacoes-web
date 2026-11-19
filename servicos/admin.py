@@ -25,3 +25,5 @@ class ServicoAdmin(admin.ModelAdmin):
 
 admin.site.register(Renovacao)
 admin.site.register(Alerta)
+
+from . import admin_utilizadores  # noqa: F401

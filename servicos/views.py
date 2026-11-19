@@ -6,15 +6,14 @@ from django.db.models import Sum
 from django.shortcuts import render
 from django.utils import timezone
 
+from .crud import servicos_visiveis
 from .models import Servico
 
 
 @login_required
 def inicio(request):
     hoje = timezone.localdate()
-    activos = Servico.objects.filter(estado=Servico.Estado.ACTIVO).select_related(
-        "projecto__cliente"
-    )
+    activos = servicos_visiveis(request).filter(estado=Servico.Estado.ACTIVO)
 
     em_30 = activos.filter(expira_em__gte=hoje, expira_em__lte=hoje + timedelta(days=30))
     totais = em_30.aggregate(receita=Sum("preco_venda"), custo=Sum("custo"))

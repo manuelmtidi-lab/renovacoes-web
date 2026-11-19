@@ -8,7 +8,14 @@ from django.shortcuts import redirect
 
 class ContaAdapter(DefaultAccountAdapter):
     def is_open_for_signup(self, request):
-        return False
+        return True
+
+    def save_user(self, request, user, form, commit=True):
+        user = super().save_user(request, user, form, commit=False)
+        user.is_active = False  # fica a aguardar a aprovação de um administrador
+        if commit:
+            user.save()
+        return user
 
 
 class SocialAdapter(DefaultSocialAccountAdapter):

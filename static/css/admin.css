@@ -1,0 +1,160 @@
+/* Tema do admin do Django com as cores do painel. Segue o modo claro/escuro do próprio admin. */
+@font-face {
+  font-family: "Geist";
+  src: url("/static/fonts/geist.woff2") format("woff2");
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+:root,
+html[data-theme="light"] {
+  --font-family-primary: "Geist", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --primary: #111111;
+  --primary-fg: #ffffff;
+  --secondary: #111111;
+  --accent: #76b900;
+  --body-fg: #111111;
+  --body-bg: #ffffff;
+  --body-quiet-color: #5c5c5c;
+  --body-medium-color: #333333;
+  --body-loud-color: #000000;
+  --header-color: #f5f5f5;
+  --header-branding-color: #76b900;
+  --header-bg: #111111;
+  --header-link-color: #f5f5f5;
+  --breadcrumbs-fg: #a1a1a1;
+  --breadcrumbs-link-fg: #f5f5f5;
+  --breadcrumbs-bg: #1a1a1a;
+  --link-fg: #4a7500;
+  --link-hover-color: #2f4d00;
+  --link-selected-fg: #4a7500;
+  --hairline-color: #e4e4e4;
+  --border-color: #dcdcdc;
+  --error-fg: #c62828;
+  --message-success-bg: #eaf5d6;
+  --message-warning-bg: #fff3d6;
+  --message-error-bg: #fde8e6;
+  --darkest-bg: #111111;
+  --darker-bg: #5c5c5c;
+  --darkened-bg: #f7f7f7;
+  --selected-bg: #eef5e1;
+  --selected-row: #f3f8ea;
+  --button-fg: #ffffff;
+  --button-bg: #4a7500;
+  --button-hover-bg: #3b5e00;
+  --default-button-bg: #4a7500;
+  --default-button-hover-bg: #3b5e00;
+  --close-button-bg: #5c5c5c;
+  --close-button-hover-bg: #111111;
+  --delete-button-bg: #c62828;
+  --delete-button-hover-bg: #a31f1f;
+  --object-tools-fg: #ffffff;
+  --object-tools-bg: #5c5c5c;
+  --object-tools-hover-bg: #111111;
+}
+
+html[data-theme="dark"] {
+  --primary: #1a1a1a;
+  --primary-fg: #f5f5f5;
+  --secondary: #111111;
+  --accent: #76b900;
+  --body-fg: #f5f5f5;
+  --body-bg: #050505;
+  --body-quiet-color: #a1a1a1;
+  --body-medium-color: #d4d4d4;
+  --body-loud-color: #ffffff;
+  --header-color: #f5f5f5;
+  --header-branding-color: #76b900;
+  --header-bg: #111111;
+  --header-link-color: #f5f5f5;
+  --breadcrumbs-fg: #a1a1a1;
+  --breadcrumbs-link-fg: #f5f5f5;
+  --breadcrumbs-bg: #1a1a1a;
+  --link-fg: #76b900;
+  --link-hover-color: #9be000;
+  --link-selected-fg: #76b900;
+  --hairline-color: #262626;
+  --border-color: #262626;
+  --error-fg: #ff5c4d;
+  --message-success-bg: #15250a;
+  --message-warning-bg: #2b2108;
+  --message-error-bg: #2d1210;
+  --darkest-bg: #000000;
+  --darker-bg: #1a1a1a;
+  --darkened-bg: #111111;
+  --selected-bg: #1c2a0c;
+  --selected-row: #16200a;
+  --button-fg: #000000;
+  --button-bg: #76b900;
+  --button-hover-bg: #8ad100;
+  --default-button-bg: #76b900;
+  --default-button-hover-bg: #8ad100;
+  --close-button-bg: #333333;
+  --close-button-hover-bg: #4a4a4a;
+  --delete-button-bg: #ff5c4d;
+  --delete-button-hover-bg: #ff7a6e;
+  --object-tools-fg: #f5f5f5;
+  --object-tools-bg: #262626;
+  --object-tools-hover-bg: #333333;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --primary: #1a1a1a;
+    --primary-fg: #f5f5f5;
+    --secondary: #111111;
+    --accent: #76b900;
+    --body-fg: #f5f5f5;
+    --body-bg: #050505;
+    --body-quiet-color: #a1a1a1;
+    --body-medium-color: #d4d4d4;
+    --body-loud-color: #ffffff;
+    --header-color: #f5f5f5;
+    --header-branding-color: #76b900;
+    --header-bg: #111111;
+    --header-link-color: #f5f5f5;
+    --breadcrumbs-fg: #a1a1a1;
+    --breadcrumbs-link-fg: #f5f5f5;
+    --breadcrumbs-bg: #1a1a1a;
+    --link-fg: #76b900;
+    --link-hover-color: #9be000;
+    --link-selected-fg: #76b900;
+    --hairline-color: #262626;
+    --border-color: #262626;
+    --error-fg: #ff5c4d;
+    --message-success-bg: #15250a;
+    --message-warning-bg: #2b2108;
+    --message-error-bg: #2d1210;
+    --darkest-bg: #000000;
+    --darker-bg: #1a1a1a;
+    --darkened-bg: #111111;
+    --selected-bg: #1c2a0c;
+    --selected-row: #16200a;
+    --button-fg: #000000;
+    --button-bg: #76b900;
+    --button-hover-bg: #8ad100;
+    --default-button-bg: #76b900;
+    --default-button-hover-bg: #8ad100;
+    --close-button-bg: #333333;
+    --close-button-hover-bg: #4a4a4a;
+    --delete-button-bg: #ff5c4d;
+    --delete-button-hover-bg: #ff7a6e;
+    --object-tools-fg: #f5f5f5;
+    --object-tools-bg: #262626;
+    --object-tools-hover-bg: #333333;
+  }
+}
+
+/* Cantos técnicos, como no resto do painel */
+.button, input[type="submit"], input[type="button"], .submit-row a.closelink, .object-tools a,
+input[type="text"], input[type="email"], input[type="password"], input[type="number"],
+input[type="url"], input[type="date"], input[type="time"], select, textarea {
+  border-radius: 2px;
+}
+.module, .module h2, .module caption, .inline-group {
+  border-radius: 2px;
+}
+.button, input[type="submit"], .submit-row input { font-weight: 600; }
+#header { border-bottom: 1px solid var(--hairline-color); }
+#site-name a { font-weight: 700; letter-spacing: -0.01em; }
+#changelist table thead th { font-weight: 600; }

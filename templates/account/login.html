@@ -34,14 +34,37 @@
       <p class="login-aviso entra mt-6" role="alert" style="--i: 3">{{ message }}</p>
       {% endfor %}
 
-      <form method="post" action="{% provider_login_url 'google' %}" class="entra mt-8" style="--i: 4">
+      {# login-padrao #}
+      <form method="post" action="{% url 'account_login' %}" class="entra mt-8 space-y-4" style="--i: 4">
+        {% csrf_token %}
+        {% if form.non_field_errors %}<p class="login-aviso" role="alert">{{ form.non_field_errors.0 }}</p>{% endif %}
+        <label class="block">
+          <span class="login-rotulo">Email</span>
+          <input type="email" name="login" value="{{ form.login.value|default_if_none:'' }}" autocomplete="email" required autofocus class="mt-1.5 block h-11 w-full border border-line bg-surface-2 px-3 text-sm text-ink focus:border-accent focus:outline-none">
+          {% for e in form.login.errors %}<span class="mt-1 block text-sm text-danger">{{ e }}</span>{% endfor %}
+        </label>
+        <label class="block">
+          <span class="login-rotulo">Palavra-passe</span>
+          <input type="password" name="password" autocomplete="current-password" required class="mt-1.5 block h-11 w-full border border-line bg-surface-2 px-3 text-sm text-ink focus:border-accent focus:outline-none">
+          {% for e in form.password.errors %}<span class="mt-1 block text-sm text-danger">{{ e }}</span>{% endfor %}
+        </label>
+        <label class="flex items-center gap-2 text-sm text-muted">
+          <input type="checkbox" name="remember" class="size-4 accent-[var(--c-accent)]"> Manter sessão iniciada
+        </label>
+        {% if redirect_field_value %}<input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}">{% endif %}
+        <button type="submit" class="h-11 w-full bg-accent text-sm font-bold text-accent-ink transition-opacity hover:opacity-90">Entrar</button>
+      </form>
+
+      <div class="entra my-5 flex items-center gap-3 text-xs text-muted" style="--i: 5" aria-hidden="true"><span class="h-px flex-1 bg-line"></span>ou<span class="h-px flex-1 bg-line"></span></div>
+
+      <form method="post" action="{% provider_login_url 'google' %}" class="entra" style="--i: 6">
         {% csrf_token %}
         <button type="submit" class="login-botao">
           Continuar com Google
           <svg viewBox="0 0 20 20" class="size-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10h12M11 5l5 5-5 5"/></svg>
         </button>
       </form>
-      <p class="entra mt-5 text-center text-xs text-muted" style="--i: 5">Acesso só para utilizadores registados pelo administrador.</p>
+      <p class="entra mt-5 text-center text-xs text-muted" style="--i: 7">Novo por aqui? <a href="{% url 'account_signup' %}" class="font-semibold text-accent hover:underline">Criar conta</a>. O acesso só é activado depois de um administrador aprovar.</p>
     </main>
   </div>
 

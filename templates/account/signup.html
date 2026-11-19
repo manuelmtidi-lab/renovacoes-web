@@ -1,0 +1,31 @@
+{% extends "account/entrada_base.html" %}
+{% block title %}Criar conta{% endblock %}
+
+{% block corpo %}
+<h1 class="entra mt-8 text-3xl font-bold tracking-tight" style="--i: 1">Criar conta</h1>
+<p class="entra mt-3 text-sm text-muted" style="--i: 2">Depois de criar a conta, um administrador tem de aprovar o seu acesso.</p>
+
+<form method="post" action="{% url 'account_signup' %}" class="entra mt-8 space-y-4" style="--i: 3">
+  {% csrf_token %}
+  {% if form.non_field_errors %}<p class="login-aviso" role="alert">{{ form.non_field_errors.0 }}</p>{% endif %}
+  <label class="block">
+    <span class="login-rotulo">Email</span>
+    <input type="email" name="email" value="{{ form.email.value|default_if_none:'' }}" autocomplete="email" required autofocus class="mt-1.5 block h-11 w-full border border-line bg-surface-2 px-3 text-sm text-ink focus:border-accent focus:outline-none">
+    {% for e in form.email.errors %}<span class="mt-1 block text-sm text-danger">{{ e }}</span>{% endfor %}
+  </label>
+  <label class="block">
+    <span class="login-rotulo">Palavra-passe</span>
+    <input type="password" name="password1" autocomplete="new-password" required class="mt-1.5 block h-11 w-full border border-line bg-surface-2 px-3 text-sm text-ink focus:border-accent focus:outline-none">
+    {% for e in form.password1.errors %}<span class="mt-1 block text-sm text-danger">{{ e }}</span>{% endfor %}
+  </label>
+  <label class="block">
+    <span class="login-rotulo">Repetir palavra-passe</span>
+    <input type="password" name="password2" autocomplete="new-password" required class="mt-1.5 block h-11 w-full border border-line bg-surface-2 px-3 text-sm text-ink focus:border-accent focus:outline-none">
+    {% for e in form.password2.errors %}<span class="mt-1 block text-sm text-danger">{{ e }}</span>{% endfor %}
+  </label>
+  {% if redirect_field_value %}<input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}">{% endif %}
+  <button type="submit" class="h-11 w-full bg-accent text-sm font-bold text-accent-ink transition-opacity hover:opacity-90">Criar conta</button>
+</form>
+
+<p class="entra mt-5 text-center text-sm text-muted" style="--i: 4">Já tem conta? <a href="{% url 'account_login' %}" class="font-semibold text-accent hover:underline">Entrar</a></p>
+{% endblock %}
