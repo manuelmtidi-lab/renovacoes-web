@@ -1,11 +1,12 @@
-{% comment %}Parametros: titulo, valor, unidade, legenda, tom (danger|warn|caution|ok|accent), icone, atraso{% endcomment %}
-<div class="animar-entrada rounded-2xl border border-line bg-surface p-5 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:shadow-md" style="animation-delay: {{ atraso|default:0 }}ms">
-  <div class="flex items-start justify-between gap-3">
-    <p class="text-sm font-medium text-muted">{{ titulo }}</p>
-    <span class="grid size-9 shrink-0 place-items-center rounded-xl {% if tom == 'danger' %}bg-danger-soft text-danger{% elif tom == 'warn' %}bg-warn-soft text-warn{% elif tom == 'caution' %}bg-caution-soft text-caution{% elif tom == 'ok' %}bg-ok-soft text-ok{% else %}bg-accent-soft text-accent{% endif %}">
-      {% include "components/icon.html" with nome=icone classe="size-[18px]" %}
-    </span>
+{# Parâmetros: titulo, valor, unidade (opcional), legenda, tom, icone, atraso (ms) #}
+<article class="cartao animar-entrada p-5" data-tom="{{ tom }}" style="animation-delay: {{ atraso|default:0 }}ms">
+  <div class="flex items-start justify-between gap-3 pr-3">
+    <h3 class="rotulo">{{ titulo }}</h3>
+    <span class="icone-tom">{% include "components/icon.html" with nome=icone classe="size-[18px]" %}</span>
   </div>
-  <p class="mt-4 text-3xl font-semibold tracking-tight tabular-nums">{{ valor }}{% if unidade %}<span class="ml-1.5 text-base font-medium text-muted">{{ unidade }}</span>{% endif %}</p>
+  <p class="mt-5 flex items-baseline gap-1.5">
+    <span class="text-4xl font-bold tracking-tight tabular-nums" data-contador>{{ valor }}</span>
+    {% if unidade %}<span class="text-sm text-muted">{{ unidade }}</span>{% endif %}
+  </p>
   <p class="mt-1 text-sm text-muted">{{ legenda }}</p>
-</div>
+</article>

@@ -1,4 +1,4 @@
-{% load tailwind_cli %}<!doctype html>
+{% load tailwind_cli static %}<!doctype html>
 <html lang="pt">
 <head>
   <meta charset="utf-8">
@@ -8,32 +8,33 @@
     (function () {
       try {
         var t = localStorage.getItem("tema");
-        var escuro = t ? t === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+        var escuro = t ? t === "dark" : true;
         document.documentElement.classList.toggle("dark", escuro);
       } catch (e) {}
     })();
   </script>
   {% tailwind_css %}
+  <link rel="stylesheet" href="{% static 'css/efeitos.css' %}">
 </head>
 <body class="min-h-screen bg-bg font-sans text-ink antialiased">
   <div class="flex min-h-screen">
 
-    <aside class="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-line bg-surface px-4 py-6 lg:flex">
+    <aside class="vt-lateral sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-line bg-surface px-4 py-6 lg:flex">
       <a href="{% url 'inicio' %}" class="flex items-center gap-3 px-2">
         <span class="grid size-9 place-items-center rounded-xl bg-accent text-sm font-bold text-accent-ink">R</span>
         <span class="leading-tight">
-          <span class="block text-sm font-semibold">Renovações</span>
+          <span class="block text-sm font-bold">Renovações</span>
           <span class="block text-xs text-muted">Contratos de clientes</span>
         </span>
       </a>
 
       <nav class="mt-8 flex flex-col gap-1">
         {% url 'inicio' as url_inicio %}
-        <a href="{{ url_inicio }}" class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition-colors {% if request.path == url_inicio %}bg-accent-soft text-accent{% else %}text-muted hover:bg-surface-2 hover:text-ink{% endif %}">
+        <a href="{{ url_inicio }}" class="nav-item" {% if request.path == url_inicio %}aria-current="page"{% endif %}>
           {% include "components/icon.html" with nome="painel" classe="size-[18px]" %} Painel
         </a>
         {% if user.is_staff %}
-        <a href="{% url 'admin:index' %}" class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-muted transition-colors hover:bg-surface-2 hover:text-ink">
+        <a href="{% url 'admin:index' %}" class="nav-item">
           {% include "components/icon.html" with nome="escudo" classe="size-[18px]" %} Administração
         </a>
         {% endif %}
@@ -63,10 +64,10 @@
     </aside>
 
     <div class="flex min-w-0 flex-1 flex-col">
-      <header class="sticky top-0 z-10 flex items-center justify-between border-b border-line bg-surface/90 px-4 py-3 backdrop-blur lg:hidden">
+      <header class="vt-cabecalho sticky top-0 z-10 flex items-center justify-between border-b border-line bg-surface/90 px-4 py-3 backdrop-blur lg:hidden">
         <a href="{% url 'inicio' %}" class="flex items-center gap-2.5">
           <span class="grid size-8 place-items-center rounded-lg bg-accent text-sm font-bold text-accent-ink">R</span>
-          <span class="text-sm font-semibold">Renovações</span>
+          <span class="text-sm font-bold">Renovações</span>
         </a>
         <div class="flex items-center gap-2">
           <button type="button" data-tema class="grid size-9 place-items-center rounded-xl border border-line text-muted" aria-label="Alternar tema">
@@ -96,5 +97,6 @@
       try { localStorage.setItem("tema", escuro ? "dark" : "light"); } catch (err) {}
     });
   </script>
+  <script src="{% static 'js/painel.js' %}" defer></script>
 </body>
 </html>

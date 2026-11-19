@@ -6,3 +6,4 @@ staticfiles/
 node_modules/
 .django_tailwind_cli/
 static/css/tailwind.css
+.backup-design/

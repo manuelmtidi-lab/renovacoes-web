@@ -12,46 +12,49 @@
   font-display: swap;
 }
 
+/* Tema claro. Verde mais escuro para o texto ter contraste em fundo claro. */
 :root {
   color-scheme: light;
-  --c-bg: oklch(0.975 0.004 90);
-  --c-surface: oklch(1 0 0);
-  --c-surface-2: oklch(0.962 0.005 90);
-  --c-line: oklch(0.91 0.006 90);
-  --c-ink: oklch(0.21 0.015 260);
-  --c-muted: oklch(0.5 0.015 260);
-  --c-accent: oklch(0.52 0.2 262);
-  --c-accent-soft: oklch(0.95 0.03 262);
-  --c-accent-ink: oklch(0.99 0 0);
-  --c-danger: oklch(0.55 0.21 25);
-  --c-danger-soft: oklch(0.95 0.035 25);
-  --c-warn: oklch(0.62 0.18 50);
-  --c-warn-soft: oklch(0.96 0.04 60);
-  --c-caution: oklch(0.55 0.12 85);
-  --c-caution-soft: oklch(0.96 0.06 95);
-  --c-ok: oklch(0.52 0.14 155);
-  --c-ok-soft: oklch(0.955 0.04 155);
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --c-bg: #ffffff;
+  --c-surface: #f7f7f7;
+  --c-surface-2: #efefef;
+  --c-line: #dcdcdc;
+  --c-ink: #111111;
+  --c-muted: #5c5c5c;
+  --c-accent: #4a7500;
+  --c-accent-soft: rgb(74 117 0 / 0.1);
+  --c-accent-ink: #ffffff;
+  --c-danger: #c62828;
+  --c-danger-soft: rgb(198 40 40 / 0.1);
+  --c-warn: #b34d00;
+  --c-warn-soft: rgb(179 77 0 / 0.1);
+  --c-caution: #8a5a00;
+  --c-caution-soft: rgb(138 90 0 / 0.12);
+  --c-ok: #0f766e;
+  --c-ok-soft: rgb(15 118 110 / 0.1);
 }
 
+/* Tema escuro (principal): preto, um só acento verde. */
 .dark {
   color-scheme: dark;
-  --c-bg: oklch(0.16 0.01 260);
-  --c-surface: oklch(0.2 0.012 260);
-  --c-surface-2: oklch(0.24 0.012 260);
-  --c-line: oklch(0.3 0.012 260);
-  --c-ink: oklch(0.96 0.004 260);
-  --c-muted: oklch(0.68 0.012 260);
-  --c-accent: oklch(0.7 0.16 262);
-  --c-accent-soft: oklch(0.3 0.06 262);
-  --c-accent-ink: oklch(0.16 0.01 260);
-  --c-danger: oklch(0.72 0.17 25);
-  --c-danger-soft: oklch(0.3 0.07 25);
-  --c-warn: oklch(0.76 0.15 60);
-  --c-warn-soft: oklch(0.31 0.06 55);
-  --c-caution: oklch(0.82 0.14 95);
-  --c-caution-soft: oklch(0.32 0.06 95);
-  --c-ok: oklch(0.77 0.15 155);
-  --c-ok-soft: oklch(0.3 0.06 155);
+  --c-bg: #050505;
+  --c-surface: #111111;
+  --c-surface-2: #1a1a1a;
+  --c-line: #262626;
+  --c-ink: #f5f5f5;
+  --c-muted: #a1a1a1;
+  --c-accent: #76b900;
+  --c-accent-soft: rgb(118 185 0 / 0.14);
+  --c-accent-ink: #000000;
+  --c-danger: #ff5c4d;
+  --c-danger-soft: rgb(255 92 77 / 0.14);
+  --c-warn: #df6500;
+  --c-warn-soft: rgb(223 101 0 / 0.16);
+  --c-caution: #ef9100;
+  --c-caution-soft: rgb(239 145 0 / 0.14);
+  --c-ok: #2dd4bf;
+  --c-ok-soft: rgb(45 212 191 / 0.12);
 }
 
 @theme inline {
@@ -73,6 +76,11 @@
   --color-caution-soft: var(--c-caution-soft);
   --color-ok: var(--c-ok);
   --color-ok-soft: var(--c-ok-soft);
+
+  /* Cantos técnicos, estilo NVIDIA */
+  --radius-lg: 2px;
+  --radius-xl: 2px;
+  --radius-2xl: 4px;
 }
 
 @keyframes subir {
@@ -81,7 +89,7 @@
 }
 
 @utility animar-entrada {
-  animation: subir 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation: subir 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 @media (prefers-reduced-motion: reduce) {
