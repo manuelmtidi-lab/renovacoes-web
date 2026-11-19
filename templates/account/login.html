@@ -1,4 +1,4 @@
-{% load socialaccount tailwind_cli %}<!doctype html>
+{% load socialaccount tailwind_cli static %}<!doctype html>
 <html lang="pt">
 <head>
   <meta charset="utf-8">
@@ -8,34 +8,43 @@
     (function () {
       try {
         var t = localStorage.getItem("tema");
-        var escuro = t ? t === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+        var escuro = t ? t === "dark" : true;
         document.documentElement.classList.toggle("dark", escuro);
       } catch (e) {}
     })();
   </script>
   {% tailwind_css %}
+  <link rel="stylesheet" href="{% static 'css/login.css' %}">
 </head>
 <body class="min-h-screen bg-bg font-sans text-ink antialiased">
-  <div class="relative flex min-h-screen items-center justify-center overflow-hidden px-4">
-    <div class="pointer-events-none absolute -top-40 left-1/2 h-96 w-[40rem] -translate-x-1/2 rounded-full bg-accent-soft blur-3xl"></div>
+  <canvas id="fundo" class="fundo-login" aria-hidden="true"></canvas>
+  <div class="login-brilho" aria-hidden="true"></div>
 
-    <main class="animar-entrada relative w-full max-w-sm rounded-3xl border border-line bg-surface p-8 shadow-sm">
-      <span class="grid size-11 place-items-center rounded-2xl bg-accent text-lg font-bold text-accent-ink">R</span>
-      <h1 class="mt-6 text-2xl font-semibold tracking-tight">Painel de renovações</h1>
-      <p class="mt-2 text-sm text-muted">Domínios, hosting, SSL e contratos dos clientes, sempre à vista.</p>
+  <div class="relative z-10 flex min-h-screen items-center justify-center px-4 py-10">
+    <main class="login-cartao w-full max-w-sm p-8">
+      <div class="entra flex items-center gap-3" style="--i: 0">
+        <span class="grid size-11 place-items-center bg-accent text-lg font-bold text-accent-ink" style="border-radius: 2px">R</span>
+        <span class="login-rotulo">Contratos de clientes</span>
+      </div>
+
+      <h1 class="entra mt-8 text-3xl font-bold tracking-tight" style="--i: 1">Painel de renovações</h1>
+      <p class="entra mt-3 text-sm text-muted" style="--i: 2">Domínios, hosting, SSL e contratos dos clientes, sempre à vista.</p>
 
       {% for message in messages %}
-      <p class="mt-5 rounded-xl bg-danger-soft px-4 py-3 text-sm text-danger">{{ message }}</p>
+      <p class="login-aviso entra mt-6" role="alert" style="--i: 3">{{ message }}</p>
       {% endfor %}
 
-      <form method="post" action="{% provider_login_url 'google' %}" class="mt-6">
+      <form method="post" action="{% provider_login_url 'google' %}" class="entra mt-8" style="--i: 4">
         {% csrf_token %}
-        <button type="submit" class="flex h-11 w-full items-center justify-center rounded-xl bg-ink text-sm font-medium text-bg transition hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
+        <button type="submit" class="login-botao">
           Continuar com Google
+          <svg viewBox="0 0 20 20" class="size-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10h12M11 5l5 5-5 5"/></svg>
         </button>
       </form>
-      <p class="mt-4 text-center text-xs text-muted">Acesso só para utilizadores registados pelo administrador.</p>
+      <p class="entra mt-5 text-center text-xs text-muted" style="--i: 5">Acesso só para utilizadores registados pelo administrador.</p>
     </main>
   </div>
+
+  <script src="{% static 'js/login-fundo.js' %}" defer></script>
 </body>
 </html>

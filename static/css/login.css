@@ -1,0 +1,106 @@
+/* Página de login. Ver DESIGN.md. Este ficheiro não passa pelo Tailwind. */
+
+@layer components {
+
+  .fundo-login {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* Brilho verde no horizonte (40% da altura, igual ao desenho no canvas) */
+  .login-brilho {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: radial-gradient(70rem 22rem at 50% 40%, color-mix(in oklab, var(--c-accent) 20%, transparent), transparent 70%);
+  }
+  .login-brilho::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 40%;
+    height: 1px;
+    background: var(--c-accent);
+    opacity: 0.6;
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 30%, #000 70%, transparent);
+    mask-image: linear-gradient(to right, transparent, #000 30%, #000 70%, transparent);
+  }
+
+  .login-cartao {
+    position: relative;
+    z-index: 10;
+    background: color-mix(in oklab, var(--c-surface) 92%, transparent);
+    border: 1px solid var(--c-line);
+    border-radius: 2px;
+  }
+  .login-cartao::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 14px;
+    height: 14px;
+    background: var(--c-accent);
+  }
+
+  .login-rotulo {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--c-muted);
+  }
+
+  .login-aviso {
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    color: var(--c-danger);
+    background: var(--c-danger-soft);
+    border: 1px solid color-mix(in oklab, var(--c-danger) 35%, transparent);
+    border-radius: 2px;
+  }
+
+  /* Botão principal: contorno verde de 2px, enche ao passar o rato */
+  .login-botao {
+    display: flex;
+    width: 100%;
+    height: 2.75rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--c-ink);
+    background: transparent;
+    border: 2px solid var(--c-accent);
+    border-radius: 2px;
+    cursor: pointer;
+    transition: background-color 150ms var(--ease), color 150ms var(--ease);
+  }
+  .login-botao:hover { background: var(--c-accent); color: var(--c-accent-ink); }
+  .login-botao:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 3px; }
+  .login-botao svg { transition: transform 180ms var(--ease); }
+  .login-botao:hover svg { transform: translateX(3px); }
+
+  /* Entrada em camadas, uma vez (50 ms entre elementos) */
+  .entra {
+    animation: entra-login 500ms var(--ease) both;
+    animation-delay: calc(var(--i, 0) * 50ms + 100ms);
+  }
+}
+
+@keyframes entra-login {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .entra { animation: none; }
+  .login-botao svg { transition: none; }
+}
