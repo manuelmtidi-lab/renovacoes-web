@@ -15,6 +15,50 @@
   {% include "components/stat_card.html" with titulo="Receita prevista (30 dias)" valor=receita|floatformat:"0g" unidade="Kz" legenda="Serviços a renovar no próximo mês" tom="ok" icone="dinheiro" atraso=180 %}
 </section>
 
+{% load static %}
+<section class="mt-10 grid gap-4 lg:grid-cols-3">
+  <article class="cartao p-5 lg:col-span-2">
+    <h2 class="rotulo">Receita por mês (últimos 12 meses)</h2>
+    <div class="mt-4 h-64"><canvas id="grafico-receita" role="img" aria-label="Gráfico de barras da receita de renovações por mês"></canvas></div>
+  </article>
+  <div class="grid gap-4">
+    <article class="cartao p-5">
+      <h2 class="rotulo">Receita em renovações (12 meses)</h2>
+      <p class="mt-2 text-2xl font-bold tabular-nums">{{ receita_12m|floatformat:"0g" }} Kz</p>
+    </article>
+    <article class="cartao p-5">
+      <h2 class="rotulo">Margem dos serviços activos</h2>
+      <p class="mt-2 text-2xl font-bold tabular-nums">{{ margem_activa|floatformat:"0g" }} Kz</p>
+    </article>
+  </div>
+</section>
+{{ grafico|json_script:"dados-grafico" }}
+<span id="cor-accent" class="hidden text-accent"></span>
+<span id="cor-muted" class="hidden text-muted"></span>
+<span id="cor-line" class="hidden text-line"></span>
+<script src="{% static 'js/chart.umd.min.js' %}"></script>
+<script>
+(function () {
+  var el = document.getElementById("grafico-receita");
+  if (!el || !window.Chart) return;
+  var d = JSON.parse(document.getElementById("dados-grafico").textContent);
+  var cor = function (id) { return getComputedStyle(document.getElementById(id)).color; };
+  new Chart(el, {
+    type: "bar",
+    data: { labels: d.etiquetas, datasets: [{ data: d.valores, backgroundColor: cor("cor-accent"), borderRadius: 4 }] },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false },
+        tooltip: { callbacks: { label: function (c) { return c.parsed.y.toLocaleString("pt-PT") + " Kz"; } } } },
+      scales: {
+        x: { ticks: { color: cor("cor-muted") }, grid: { display: false } },
+        y: { beginAtZero: true, ticks: { color: cor("cor-muted") }, grid: { color: cor("cor-line") } }
+      }
+    }
+  });
+})();
+</script>
+
 <section class="mt-10">
   <div class="mb-4 flex items-end justify-between">
     <div>
