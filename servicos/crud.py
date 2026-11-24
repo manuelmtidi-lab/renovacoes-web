@@ -118,11 +118,32 @@ def _lista(request, completo, parcial, queryset, contexto):
     return render(request, completo, contexto)
 
 
+def _descrever_alteracoes(form):
+    from django import forms as dj
+    partes = []
+    for nome in form.changed_data:
+        campo = form.fields[nome]
+        etiqueta = str(campo.label or nome)
+        if isinstance(campo, dj.ModelChoiceField) or nome == "notas":
+            partes.append(f"{etiqueta} alterado")
+            continue
+        antes = form.initial.get(nome)
+        depois = form.cleaned_data.get(nome)
+        antes = "—" if antes in (None, "") else antes
+        depois = "—" if depois in (None, "") else depois
+        partes.append(f"{etiqueta}: {antes} → {depois}")
+    return "; ".join(partes)
+
+
 def _formulario(request, Form, instancia, titulo, voltar, destino, mensagem, initial=None):
     if request.method == "POST":
         form = Form(request.POST, instance=instancia)
         if form.is_valid():
+            from .models import registar
+            criar = instancia is None or instancia.pk is None
+            alteracoes = "" if criar else _descrever_alteracoes(form)
             obj = form.save()
+            registar(request.user, "criou" if criar else "editou", obj, alteracoes)
             messages.success(request, mensagem)
             return redirect(destino, pk=obj.pk)
     else:
@@ -136,11 +157,14 @@ def _formulario(request, Form, instancia, titulo, voltar, destino, mensagem, ini
 
 def _apagar(request, obj, titulo, aviso, voltar, depois, erro_protegido=None):
     if request.method == "POST":
+        from .models import registar, rotulo_objecto
+        rotulo = rotulo_objecto(obj)
         try:
             obj.delete()
         except ProtectedError:
             messages.error(request, erro_protegido or "Não foi possível apagar este registo.")
             return redirect(voltar)
+        registar(request.user, "apagou", rotulo)
         messages.success(request, "Apagado.")
         return redirect(depois)
     return render(
@@ -418,6 +442,7 @@ def servico_apagar(request, pk):
 
 @exigir(*EDITAR)
 def servico_renovar(request, pk):
+    from .models import cambio_actual, registar
     servico = get_object_or_404(servicos_visiveis(request), pk=pk, estado=Servico.Estado.ACTIVO)
     if request.method == "POST":
         form = RenovacaoForm(request.POST, servico=servico)
@@ -429,10 +454,16 @@ def servico_renovar(request, pk):
                     valor=form.cleaned_data["valor"],
                     nova_expiracao=form.cleaned_data["nova_expiracao"],
                     utilizador=request.user,
+                    custo=servico.custo,
+                    cambio=cambio_actual() if servico.moeda == Servico.Moeda.USD else None,
                 )
                 servico.expira_em = form.cleaned_data["nova_expiracao"]
                 servico.tratamento = Servico.Tratamento.POR_CONTACTAR
                 servico.save(update_fields=["expira_em", "tratamento"])
+                registar(
+                    request.user, "renovou", servico,
+                    f"nova expiração {form.cleaned_data['nova_expiracao']:%d/%m/%Y}; valor {form.cleaned_data['valor']:,.0f} Kz".replace(",", "."),
+                )
             messages.success(request, "Renovação registada.")
             if getattr(request, "htmx", None):
                 from django.http import HttpResponse
@@ -458,11 +489,16 @@ def servico_tratamento(request, pk):
     if request.method == "POST":
         novo = request.POST.get("tratamento", "")
         texto = request.POST.get("nota", "").strip()[:500]
+        from .models import registar
         if novo in Servico.Tratamento.values:
+            if novo != servico.tratamento:
+                registar(request.user, "tratamento", servico,
+                         f"{servico.get_tratamento_display()} → {Servico.Tratamento(novo).label}")
             servico.tratamento = novo
             servico.save(update_fields=["tratamento"])
         if texto:
             Nota.objects.create(servico=servico, texto=texto, utilizador=request.user)
+            registar(request.user, "nota", servico, texto[:200])
         messages.success(request, "Tratamento actualizado.")
     return redirect("servico_detalhe", pk=servico.pk)
 
@@ -483,3 +519,10 @@ def servico_proforma(request, pk):
     resposta = HttpResponse(pdf, content_type="application/pdf")
     resposta["Content-Disposition"] = f'inline; filename="{numero_proforma(servico, timezone.localdate())}.pdf"'
     return resposta
+
+
+@exigir("administrador")
+def actividade(request):
+    from .models import Actividade
+    itens = Actividade.objects.select_related("utilizador")[:200]
+    return render(request, "actividade.html", {"itens": itens})

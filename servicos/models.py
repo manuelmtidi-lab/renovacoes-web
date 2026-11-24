@@ -124,6 +124,8 @@ class Renovacao(models.Model):
     utilizador = models.ForeignKey(
         settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL, related_name="renovacoes"
     )
+    custo = models.DecimalField("custo na altura", max_digits=12, decimal_places=2, null=True, blank=True)
+    cambio = models.DecimalField("câmbio usado (Kz por USD)", max_digits=12, decimal_places=4, null=True, blank=True)
 
     class Meta:
         ordering = ["-data"]
@@ -235,3 +237,41 @@ def cambio_actual():
 def usd_para_kz(valor_usd, taxa):
     from decimal import Decimal
     return (Decimal(valor_usd) * Decimal(taxa)).quantize(Decimal("0.01"))
+
+
+class Actividade(models.Model):
+    class Acao(models.TextChoices):
+        CRIOU = "criou", "Criou"
+        EDITOU = "editou", "Editou"
+        APAGOU = "apagou", "Apagou"
+        RENOVOU = "renovou", "Renovou"
+        TRATAMENTO = "tratamento", "Tratamento"
+        NOTA = "nota", "Nota"
+
+    utilizador = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+")
+    acao = models.CharField(max_length=12, choices=Acao.choices)
+    objecto = models.CharField(max_length=250)
+    descricao = models.CharField(max_length=500, blank=True)
+    criado_em = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-criado_em"]
+        verbose_name_plural = "actividade"
+
+    def __str__(self):
+        return f"{self.acao} {self.objecto}"
+
+
+def rotulo_objecto(obj):
+    if isinstance(obj, str):
+        return obj
+    return f"{obj._meta.verbose_name.capitalize()} · {obj}"
+
+
+def registar(utilizador, acao, objecto, descricao=""):
+    """Guarda uma linha no histórico. Nunca regista palavras-passe, só nomes e campos alterados."""
+    if not getattr(utilizador, "is_authenticated", False):
+        utilizador = None
+    Actividade.objects.create(
+        utilizador=utilizador, acao=acao, objecto=rotulo_objecto(objecto)[:250], descricao=descricao[:500]
+    )

@@ -206,3 +206,31 @@ class RenovarHtmxTests(BaseTest):
         }, HTTP_HX_REQUEST="true")
         self.assertEqual(r.status_code, 204)
         self.assertEqual(r["HX-Redirect"], f"/servicos/{s.pk}/")
+
+
+class ActividadeTests(BaseTest):
+    def test_tratamento_fica_registado(self):
+        from servicos.models import Actividade
+        s = novo_servico(self.projecto, 20)
+        self.client.force_login(self.gestor)
+        self.client.post(f"/servicos/{s.pk}/tratamento/", {"tratamento": "contactado", "nota": "Liguei"})
+        acoes = set(Actividade.objects.values_list("acao", flat=True))
+        self.assertEqual(acoes, {"tratamento", "nota"})
+        self.assertEqual(Actividade.objects.filter(acao="tratamento").get().utilizador, self.gestor)
+
+    def test_so_administrador_ve_a_pagina(self):
+        self.client.force_login(self.gestor)
+        self.assertEqual(self.client.get("/actividade/").status_code, 403)
+        admin = User.objects.create_user("admin1", "admin1@exemplo.ao", "x")
+        admin.groups.add(Group.objects.get_or_create(name="Administrador")[0])
+        self.client.force_login(admin)
+        self.assertEqual(self.client.get("/actividade/").status_code, 200)
+
+    def test_apagar_fica_registado(self):
+        from servicos.models import Actividade
+        s = novo_servico(self.projecto, 20)
+        admin = User.objects.create_user("admin2", "admin2@exemplo.ao", "x")
+        admin.groups.add(Group.objects.get_or_create(name="Administrador")[0])
+        self.client.force_login(admin)
+        self.client.post(f"/servicos/{s.pk}/apagar/")
+        self.assertTrue(Actividade.objects.filter(acao="apagou").exists())

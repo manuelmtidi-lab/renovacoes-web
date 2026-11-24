@@ -60,6 +60,9 @@
         </a>
         {% endwith %}
         {% if user.is_staff %}
+        <a href="{% url 'actividade' %}" class="nav-item" {% if request.resolver_match.url_name == 'actividade' %}aria-current="page"{% endif %}>
+          {% include "components/icon.html" with nome="relogio" classe="size-[18px]" %} Actividade
+        </a>
         <a href="{% url 'admin:index' %}" class="nav-item">
           {% include "components/icon.html" with nome="escudo" classe="size-[18px]" %} Administração
         </a>

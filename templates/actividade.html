@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Actividade{% endblock %}
+
+{% block content %}
+<div class="animar-entrada">
+  <h1 class="text-2xl font-bold tracking-tight sm:text-3xl">Actividade</h1>
+  <p class="mt-1 text-muted">Quem fez o quê e quando. Últimas 200 acções.</p>
+</div>
+
+{% if itens %}
+<div class="cartao sem-brilho mt-8 overflow-x-auto">
+  <table class="w-full text-left text-sm">
+    <thead class="border-b border-line bg-surface-2">
+      <tr>
+        <th class="rotulo px-5 py-2.5">Quando</th>
+        <th class="rotulo px-5 py-2.5">Quem</th>
+        <th class="rotulo px-5 py-2.5">Acção</th>
+        <th class="rotulo px-5 py-2.5">Objecto</th>
+        <th class="rotulo px-5 py-2.5">Detalhe</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-line">
+      {% for a in itens %}
+      <tr class="linha">
+        <td class="px-5 py-3 tabular-nums text-muted whitespace-nowrap">{{ a.criado_em|date:"d/m/Y H:i" }}</td>
+        <td class="px-5 py-3">{% if a.utilizador %}{{ a.utilizador.get_full_name|default:a.utilizador.username }}{% else %}—{% endif %}</td>
+        <td class="px-5 py-3 font-bold">{{ a.get_acao_display }}</td>
+        <td class="px-5 py-3">{{ a.objecto }}</td>
+        <td class="px-5 py-3 text-muted">{{ a.descricao|default:"—" }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="mt-8 border border-dashed border-line bg-surface p-10 text-center">
+  <p class="font-bold">Ainda sem actividade</p>
+  <p class="mt-1 text-sm text-muted">As acções feitas a partir de agora aparecem aqui.</p>
+</div>
+{% endif %}
+{% endblock %}
