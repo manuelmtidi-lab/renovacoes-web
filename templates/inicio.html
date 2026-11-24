@@ -100,7 +100,7 @@
             <p class="text-muted">{% if s.dias_para_expirar < 0 %}{% with n=s.dias_para_expirar|cut:"-" %}há {{ n }} dia{{ n|pluralize }}{% endwith %}{% elif s.dias_para_expirar == 0 %}hoje{% else %}em {{ s.dias_para_expirar }} dia{{ s.dias_para_expirar|pluralize }}{% endif %}</p>
             <span class="barra-dias" data-estado="{{ s.estado_alerta }}" style="--d: {{ s.dias_para_expirar }}" aria-hidden="true"><i></i></span>
           </td>
-          <td class="px-5 py-3">{% include "components/badge.html" with estado=s.estado_alerta %}</td>
+          <td class="px-5 py-3">{% include "components/badge.html" with estado=s.estado_alerta %}<p class="mt-1 text-xs text-muted">{{ s.get_tratamento_display }}</p></td>
           <td class="px-5 py-3 text-right font-bold tabular-nums">{{ s.preco_venda|floatformat:"0g" }} Kz</td>
         </tr>
         {% endfor %}

@@ -64,6 +64,14 @@ class Servico(models.Model):
     expira_em = models.DateField("expira em")
     estado = models.CharField(max_length=12, choices=Estado.choices, default=Estado.ACTIVO)
 
+    class Tratamento(models.TextChoices):
+        POR_CONTACTAR = "por_contactar", "Por contactar"
+        CONTACTADO = "contactado", "Cliente contactado"
+        PROFORMA = "proforma", "Proforma enviada"
+        PAGO = "pago", "Pago"
+
+    tratamento = models.CharField("tratamento", max_length=15, choices=Tratamento.choices, default=Tratamento.POR_CONTACTAR)
+
     class Meta:
         ordering = ["expira_em"]
         verbose_name = "serviço"
@@ -165,3 +173,19 @@ def _link_whatsapp(self):
 
 
 Servico.link_whatsapp = property(_link_whatsapp)
+
+
+from django.conf import settings
+
+
+class Nota(models.Model):
+    servico = models.ForeignKey(Servico, on_delete=models.CASCADE, related_name="notas")
+    texto = models.CharField(max_length=500)
+    utilizador = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+")
+    criado_em = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-criado_em"]
+
+    def __str__(self):
+        return self.texto[:40]

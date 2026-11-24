@@ -431,7 +431,8 @@ def servico_renovar(request, pk):
                     utilizador=request.user,
                 )
                 servico.expira_em = form.cleaned_data["nova_expiracao"]
-                servico.save(update_fields=["expira_em"])
+                servico.tratamento = Servico.Tratamento.POR_CONTACTAR
+                servico.save(update_fields=["expira_em", "tratamento"])
             messages.success(request, "Renovação registada.")
             resposta = redirect("servico_detalhe", pk=servico.pk)
             if getattr(request, "htmx", None):
@@ -446,3 +447,19 @@ def servico_renovar(request, pk):
             initial={"data": timezone.localdate(), "valor": servico.preco_venda, "nova_expiracao": proxima},
         )
     return render(request, "servicos/_renovar.html", {"form": form, "servico": servico})
+
+
+@exigir(*EDITAR)
+def servico_tratamento(request, pk):
+    from .models import Nota
+    servico = get_object_or_404(servicos_visiveis(request), pk=pk, estado=Servico.Estado.ACTIVO)
+    if request.method == "POST":
+        novo = request.POST.get("tratamento", "")
+        texto = request.POST.get("nota", "").strip()[:500]
+        if novo in Servico.Tratamento.values:
+            servico.tratamento = novo
+            servico.save(update_fields=["tratamento"])
+        if texto:
+            Nota.objects.create(servico=servico, texto=texto, utilizador=request.user)
+        messages.success(request, "Tratamento actualizado.")
+    return redirect("servico_detalhe", pk=servico.pk)
