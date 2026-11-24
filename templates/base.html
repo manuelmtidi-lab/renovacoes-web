@@ -16,7 +16,7 @@
   {% tailwind_css %}
   <link rel="stylesheet" href="{% static 'css/efeitos.css' %}">
   <link rel="stylesheet" href="{% static 'css/crud.css' %}">
-  <link rel="stylesheet" href="{% static 'css/animacoes.css' %}">
+  <link rel="stylesheet" href="{% static 'css/animacoes.css' %}?v=8">
   <script src="{% static 'js/htmx.min.js' %}" defer></script>
   <link rel="manifest" href="{% url 'manifest' %}">
   <meta name="theme-color" content="#0a0a0a">
@@ -30,12 +30,12 @@
     }
   </script>
 </head>
-<body class="min-h-screen bg-bg font-sans text-ink antialiased" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+<body data-nome="{{ user.get_full_name|default:user.username }}" class="min-h-screen bg-bg font-sans text-ink antialiased" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
   <div class="flex min-h-screen">
 
     <aside class="vt-lateral sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-line bg-surface px-4 py-6 lg:flex">
       <a href="{% url 'inicio' %}" class="flex items-center gap-3 px-2">
-        <span class="grid size-9 place-items-center rounded-xl bg-accent text-sm font-bold text-accent-ink">R</span>
+        {% include "components/logo.html" with tamanho="36" %}
         <span class="leading-tight">
           <span class="block text-sm font-bold">Renovações</span>
           <span class="block text-xs text-muted">Contratos de clientes</span>
@@ -92,7 +92,7 @@
     <div class="flex min-w-0 flex-1 flex-col">
       <header class="vt-cabecalho sticky top-0 z-10 flex items-center justify-between border-b border-line bg-surface/90 px-4 py-3 backdrop-blur lg:hidden">
         <a href="{% url 'inicio' %}" class="flex items-center gap-2.5">
-          <span class="grid size-8 place-items-center rounded-lg bg-accent text-sm font-bold text-accent-ink">R</span>
+          {% include "components/logo.html" with tamanho="32" %}
           <span class="text-sm font-bold">Renovações</span>
         </a>
         <div class="flex items-center gap-2">
@@ -143,6 +143,7 @@
     {% endwith %}
   </nav>
   <script src="{% static 'js/painel.js' %}" defer></script>
-  <script src="{% static 'js/animacoes.js' %}" defer></script>
+  <script src="{% static 'js/animacoes.js' %}?v=8" defer></script>
+  <script src="{% static 'js/instalar.js' %}" defer></script>
 </body>
 </html>

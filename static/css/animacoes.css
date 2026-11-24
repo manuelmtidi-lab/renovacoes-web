@@ -163,3 +163,214 @@ textarea:focus {
   .login-botao { animation: respirar 3.2s ease-in-out 1.4s infinite; }
   .login-botao:hover { animation: none; }
 }
+
+/* parte-4: animação de abertura (5,2 s, uma vez por sessão) */
+@keyframes abertura-gira { from { transform: rotate(-120deg); } to { transform: rotate(0); } }
+@keyframes abertura-traco { to { stroke-dashoffset: 0; } }
+@keyframes abertura-pista { from { opacity: 0; } }
+@keyframes abertura-quadrado { from { opacity: 0; transform: scale(0); } }
+@keyframes abertura-sai { to { opacity: 0; visibility: hidden; transform: scale(1.03); } }
+
+html.a-abrir { overflow: hidden; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .abertura-tela {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: 1.75rem;
+    cursor: pointer;
+    background:
+      radial-gradient(40rem 22rem at 50% 38%, color-mix(in oklab, var(--c-accent) 14%, transparent), transparent 70%),
+      var(--c-bg, #0a0a0a);
+    animation: abertura-sai 450ms var(--ease) 2550ms forwards;
+  }
+  .abertura-tela .logo-marca {
+    overflow: visible;
+    animation: abertura-gira 1.3s var(--ease) both;
+    filter: drop-shadow(0 0 18px color-mix(in oklab, var(--c-accent) 35%, transparent));
+  }
+  .abertura-tela .logo-marca circle { animation: abertura-pista 500ms var(--ease) both; }
+  .abertura-tela .logo-marca path {
+    stroke-linecap: round;
+    stroke-dasharray: 95;
+    stroke-dashoffset: 95;
+    animation: abertura-traco 1.0s var(--ease) 120ms forwards;
+  }
+  .abertura-tela .logo-marca rect {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: abertura-quadrado 450ms var(--ease-mola) 0.9s backwards;
+  }
+  .abertura-nome {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--c-ink);
+  }
+  .abertura-nome span {
+    display: inline-block;
+    animation: palavra 600ms var(--ease) backwards;
+    animation-delay: calc(1.1s + var(--l, 0) * 45ms);
+  }
+  .abertura-barra {
+    width: 12rem;
+    height: 2px;
+    overflow: hidden;
+    background: var(--c-line);
+  }
+  .abertura-barra > i {
+    display: block;
+    height: 100%;
+    transform-origin: left;
+    background: linear-gradient(90deg, var(--c-accent), var(--c-brilho));
+    animation: progresso 2.5s linear 120ms both;
+  }
+}
+
+/* parte-5: linha pequena por baixo do nome (Tunganetu ou o teu nome) */
+@media (prefers-reduced-motion: no-preference) {
+  .abertura-sub {
+    margin: -1rem 0 0;
+    font-size: 0.75rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--c-muted);
+    animation: palavra 700ms var(--ease) 2.8s backwards;
+  }
+}
+
+/* parte-6: boas-vindas depois do login (cortina ao meio, 5 s) */
+@keyframes bv-fenda {
+  0% { transform: scaleY(0); opacity: 1; }
+  55% { transform: scaleY(1); opacity: 1; }
+  100% { transform: scaleY(1); opacity: 0; }
+}
+@keyframes bv-linha { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes bv-some { to { opacity: 0; transform: translateY(-8px); } }
+@keyframes bv-esq { to { opacity: 0; } }
+@keyframes bv-dir { to { opacity: 0; } }
+
+@media (prefers-reduced-motion: no-preference) {
+  .bv-tela {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+  }
+  .bv-metade {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 50%;
+    background:
+      radial-gradient(34rem 20rem at 50% 45%, color-mix(in oklab, var(--c-accent) 10%, transparent), transparent 70%),
+      var(--c-bg, #0a0a0a);
+  }
+  .bv-esq { left: 0; animation: bv-esq 600ms ease 2400ms forwards; }
+  .bv-dir { right: 0; animation: bv-dir 600ms ease 2400ms forwards; }
+  .bv-esq { background-position: left; }
+  .bv-fenda {
+    position: absolute;
+    left: calc(50% - 1px);
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--c-accent);
+    box-shadow: 0 0 24px 2px color-mix(in oklab, var(--c-accent) 60%, transparent);
+    transform-origin: center;
+    animation: bv-fenda 1.0s var(--ease) 120ms both;
+  }
+  .bv-conteudo {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    gap: 1rem;
+    padding: 0 1.5rem;
+    text-align: center;
+    animation: bv-some 300ms var(--ease) 2200ms forwards;
+  }
+  .bv-saudacao {
+    margin: 0;
+    font-size: 0.8125rem;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--c-muted);
+    animation: palavra 450ms var(--ease) 0.7s backwards;
+  }
+  .bv-nome {
+    margin: 0;
+    font-size: clamp(2.25rem, 9vw, 3.75rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--c-ink);
+  }
+  .bv-nome span {
+    display: inline-block;
+    animation: palavra 700ms var(--ease) backwards;
+    animation-delay: calc(0.95s + var(--l, 0) * 40ms);
+  }
+  .bv-linha {
+    width: min(16rem, 70vw);
+    height: 2px;
+    transform-origin: left;
+    background: linear-gradient(90deg, var(--c-accent), var(--c-brilho), transparent);
+    animation: bv-linha 0.7s var(--ease) 1.4s backwards;
+  }
+  .bv-frase {
+    margin: 0;
+    font-size: 0.9375rem;
+    color: var(--c-muted);
+    animation: palavra 450ms var(--ease) 1.75s backwards;
+  }
+}
+
+/* parte-8: universo (fundo animado do painel) */
+@keyframes nebulosa-a { to { transform: translate(7vw, 5vh) scale(1.12); } }
+@keyframes nebulosa-b { to { transform: translate(-6vw, -4vh) scale(1.08); } }
+
+.universo {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  overflow: hidden;
+  pointer-events: none;
+}
+:root:not(.dark) .universo { opacity: 0.55; }
+.universo canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.universo::before,
+.universo::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(40px);
+}
+.universo::before {
+  width: 60vw;
+  height: 60vw;
+  left: -15vw;
+  top: -20vw;
+  background: radial-gradient(circle, color-mix(in oklab, var(--c-accent) 13%, transparent), transparent 65%);
+}
+.universo::after {
+  width: 55vw;
+  height: 55vw;
+  right: -18vw;
+  bottom: -22vw;
+  background: radial-gradient(circle, color-mix(in oklab, var(--c-accent) 8%, #3b6cff 6%), transparent 65%);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .universo::before { animation: nebulosa-a 38s ease-in-out infinite alternate; }
+  .universo::after { animation: nebulosa-b 46s ease-in-out infinite alternate; }
+}

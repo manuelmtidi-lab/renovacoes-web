@@ -22,12 +22,13 @@
   <div class="relative z-10 flex min-h-screen items-center justify-center px-4 py-10">
     <main class="login-cartao w-full max-w-sm p-8">
       <div class="entra flex items-center gap-3" style="--i: 0">
-        <span class="grid size-11 place-items-center bg-accent text-lg font-bold text-accent-ink" style="border-radius: 2px">R</span>
+        {% include "components/logo.html" with tamanho="44" %}
         <span class="login-rotulo">Contratos de clientes</span>
       </div>
       {% block corpo %}{% endblock %}
     </main>
   </div>
   <script src="{% static 'js/login-fundo.js' %}" defer></script>
+  <script src="{% static 'js/instalar.js' %}" defer></script>
 </body>
 </html>

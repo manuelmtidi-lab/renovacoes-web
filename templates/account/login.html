@@ -15,7 +15,7 @@
   </script>
   {% tailwind_css %}
   <link rel="stylesheet" href="{% static 'css/login.css' %}?v=2">
-  <link rel="stylesheet" href="{% static 'css/animacoes.css' %}">
+  <link rel="stylesheet" href="{% static 'css/animacoes.css' %}?v=8">
 </head>
 <body class="min-h-screen bg-bg font-sans text-ink antialiased">
   <canvas id="fundo" class="fundo-login" aria-hidden="true"></canvas>
@@ -24,7 +24,7 @@
   <div class="login-pagina">
     <main class="login-cartao w-full max-w-sm p-8">
       <div class="entra flex items-center gap-3" style="--i: 0">
-        <span class="grid size-11 place-items-center bg-accent text-lg font-bold text-accent-ink" style="border-radius: 2px">R</span>
+        {% include "components/logo.html" with tamanho="44" %}
         <span class="login-rotulo">Contratos de clientes</span>
       </div>
 
@@ -80,7 +80,9 @@
     </footer>
   </div>
 
+  <script>document.addEventListener("submit", function () { try { sessionStorage.setItem("boasvindas", "1"); } catch (e) {} });</script>
   <script src="{% static 'js/login-fundo.js' %}" defer></script>
-  <script src="{% static 'js/animacoes.js' %}" defer></script>
+  <script src="{% static 'js/animacoes.js' %}?v=8" defer></script>
+  <script src="{% static 'js/instalar.js' %}" defer></script>
 </body>
 </html>
