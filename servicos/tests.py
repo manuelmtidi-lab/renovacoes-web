@@ -92,3 +92,51 @@ class TelefoneWhatsappTests(SimpleTestCase):
     def test_invalidos(self):
         for entrada in ("", None, "12345", "abc"):
             self.assertEqual(telefone_whatsapp(entrada), "")
+
+
+class TratamentoTests(BaseTest):
+    def test_gestor_altera_tratamento_e_guarda_nota(self):
+        s = novo_servico(self.projecto, 20)
+        self.client.force_login(self.gestor)
+        r = self.client.post(f"/servicos/{s.pk}/tratamento/", {"tratamento": "contactado", "nota": "Falei com o cliente"})
+        self.assertEqual(r.status_code, 302)
+        s.refresh_from_db()
+        self.assertEqual(s.tratamento, "contactado")
+        nota = s.notas.get()
+        self.assertEqual(nota.texto, "Falei com o cliente")
+        self.assertEqual(nota.utilizador, self.gestor)
+
+    def test_tecnico_nao_pode_alterar(self):
+        s = novo_servico(self.projecto, 20)
+        self.client.force_login(self.tecnico)
+        r = self.client.post(f"/servicos/{s.pk}/tratamento/", {"tratamento": "pago", "nota": "x"})
+        self.assertEqual(r.status_code, 403)
+        s.refresh_from_db()
+        self.assertEqual(s.tratamento, "por_contactar")
+        self.assertEqual(s.notas.count(), 0)
+
+    def test_estado_invalido_e_ignorado(self):
+        s = novo_servico(self.projecto, 20)
+        self.client.force_login(self.gestor)
+        self.client.post(f"/servicos/{s.pk}/tratamento/", {"tratamento": "inventado"})
+        s.refresh_from_db()
+        self.assertEqual(s.tratamento, "por_contactar")
+
+    def test_renovar_repoe_tratamento_e_mantem_notas(self):
+        from datetime import timedelta
+        from django.utils import timezone
+        s = novo_servico(self.projecto, 10)
+        self.client.force_login(self.gestor)
+        self.client.post(f"/servicos/{s.pk}/tratamento/", {"tratamento": "pago", "nota": "Pago em dinheiro"})
+        nova = s.expira_em + timedelta(days=365)
+        r = self.client.post(f"/servicos/{s.pk}/renovar/", {
+            "data": timezone.localdate().isoformat(),
+            "valor": "50000",
+            "nova_expiracao": nova.isoformat(),
+        })
+        self.assertEqual(r.status_code, 302)
+        s.refresh_from_db()
+        self.assertEqual(s.expira_em, nova)
+        self.assertEqual(s.tratamento, "por_contactar")
+        self.assertEqual(s.notas.count(), 1)
+        self.assertEqual(s.renovacoes.count(), 1)
