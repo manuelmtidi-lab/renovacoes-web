@@ -75,5 +75,7 @@ def entrada(request):
     """Raiz do site: painel para quem tem sessão, página de entrada para os outros."""
     if request.user.is_authenticated:
         return inicio(request)
+    from django.contrib.messages import get_messages
     from django.shortcuts import render
+    list(get_messages(request))
     return render(request, "entrada.html")

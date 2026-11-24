@@ -97,7 +97,7 @@ AUTHENTICATION_BACKENDS = [
 
 LOGIN_URL = "account_login"
 LOGIN_REDIRECT_URL = "/"
-LOGOUT_REDIRECT_URL = "account_login"
+LOGOUT_REDIRECT_URL = "/"
 
 ACCOUNT_LOGIN_METHODS = {"email"}
 ACCOUNT_SIGNUP_FIELDS = ["email*", "password1*", "password2*"]
