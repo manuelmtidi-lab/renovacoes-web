@@ -41,6 +41,7 @@
     <h2 class="rotulo">Valores</h2>
     <dl class="mt-3 divide-y divide-line text-sm">
       <div class="flex justify-between gap-4 py-2.5"><dt class="text-muted">Custo</dt><dd class="font-medium tabular-nums">{{ servico.custo|floatformat:"0g" }} Kz</dd></div>
+      {% if servico.moeda == "usd" and servico.custo_usd %}<div class="flex justify-between gap-4 py-2.5"><dt class="text-muted">Custo em dólares</dt><dd class="font-medium tabular-nums">{{ servico.custo_usd|floatformat:"2g" }} USD</dd></div>{% endif %}
       <div class="flex justify-between gap-4 py-2.5"><dt class="text-muted">Preço de venda</dt><dd class="font-medium tabular-nums">{{ servico.preco_venda|floatformat:"0g" }} Kz</dd></div>
       <div class="flex justify-between gap-4 py-2.5"><dt class="text-muted">Margem</dt><dd class="font-bold tabular-nums">{{ servico.margem|floatformat:"0g" }} Kz</dd></div>
     </dl>

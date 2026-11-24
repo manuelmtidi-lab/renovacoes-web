@@ -78,6 +78,12 @@ class Servico(models.Model):
         BIENAL = 24, "Bienal"
 
     ciclo = models.PositiveSmallIntegerField("ciclo de renovação", choices=Ciclo.choices, default=Ciclo.ANUAL)
+    class Moeda(models.TextChoices):
+        KZ = "kz", "Kwanza"
+        USD = "usd", "Dólar"
+
+    moeda = models.CharField("moeda do custo", max_length=3, choices=Moeda.choices, default=Moeda.KZ)
+    custo_usd = models.DecimalField("custo em USD", max_digits=12, decimal_places=2, null=True, blank=True)
     tratamento = models.CharField("tratamento", max_length=15, choices=Tratamento.choices, default=Tratamento.POR_CONTACTAR)
 
     class Meta:
@@ -207,3 +213,25 @@ def somar_meses(data, meses):
     mes += 1
     dia = min(data.day, calendar.monthrange(ano, mes)[1])
     return data.replace(year=ano, month=mes, day=dia)
+
+
+class Cambio(models.Model):
+    usd_kz = models.DecimalField("Kz por 1 USD", max_digits=12, decimal_places=4)
+    fonte = models.CharField(max_length=80, blank=True)
+    criado_em = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-criado_em"]
+
+    def __str__(self):
+        return f"{self.usd_kz} Kz/USD ({self.criado_em:%d/%m/%Y})"
+
+
+def cambio_actual():
+    c = Cambio.objects.first()
+    return c.usd_kz if c else None
+
+
+def usd_para_kz(valor_usd, taxa):
+    from decimal import Decimal
+    return (Decimal(valor_usd) * Decimal(taxa)).quantize(Decimal("0.01"))

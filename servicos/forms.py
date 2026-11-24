@@ -50,6 +50,8 @@ class ServicoForm(EstiloMixin, forms.ModelForm):
             "tipo",
             "fornecedor",
             "custo",
+            "moeda",
+            "custo_usd",
             "preco_venda",
             "inicio",
             "expira_em",
@@ -68,6 +70,8 @@ class ServicoForm(EstiloMixin, forms.ModelForm):
         )
         self.fields["projecto"].empty_label = "Escolha o projecto"
         self.fields["custo"].label = "Custo (Kz)"
+        self.fields["custo"].required = False
+        self.fields["custo"].help_text = "Se a moeda for Dólar, é calculado com o câmbio actual."
         self.fields["preco_venda"].label = "Preço de venda (Kz)"
 
     def clean(self):
@@ -75,6 +79,17 @@ class ServicoForm(EstiloMixin, forms.ModelForm):
         inicio, expira = dados.get("inicio"), dados.get("expira_em")
         if inicio and expira and expira < inicio:
             self.add_error("expira_em", "A expiração não pode ser anterior ao início.")
+        if dados.get("moeda") == Servico.Moeda.USD:
+            from .models import cambio_actual, usd_para_kz
+            usd, taxa = dados.get("custo_usd"), cambio_actual()
+            if usd is None:
+                self.add_error("custo_usd", "Indique o custo em dólares.")
+            elif taxa is None:
+                self.add_error("custo_usd", "Ainda não há câmbio. Corra: actualizar_cambio --manual VALOR.")
+            else:
+                dados["custo"] = usd_para_kz(usd, taxa)
+        elif dados.get("custo") is None:
+            self.add_error("custo", "Indique o custo em kwanzas.")
         for nome in ("custo", "preco_venda"):
             valor = dados.get(nome)
             if valor is not None and valor < 0:

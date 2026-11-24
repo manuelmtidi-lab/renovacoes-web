@@ -161,3 +161,18 @@ class SomarMesesTests(SimpleTestCase):
         self.assertEqual(somar_meses(date(2028, 2, 29), 12), date(2029, 2, 28))
         self.assertEqual(somar_meses(date(2026, 11, 24), 3), date(2027, 2, 24))
         self.assertEqual(somar_meses(date(2026, 12, 15), 24), date(2028, 12, 15))
+
+
+class CambioTests(SimpleTestCase):
+    def test_usd_para_kz(self):
+        from decimal import Decimal
+        from servicos.models import usd_para_kz
+        self.assertEqual(usd_para_kz("10.00", "912.5"), Decimal("9125.00"))
+
+    def test_taxa_plausivel(self):
+        from decimal import Decimal
+        from servicos.management.commands.actualizar_cambio import taxa_plausivel
+        self.assertTrue(taxa_plausivel(Decimal("920"), None))
+        self.assertTrue(taxa_plausivel(Decimal("920"), Decimal("900")))
+        self.assertFalse(taxa_plausivel(Decimal("1500"), Decimal("900")))
+        self.assertFalse(taxa_plausivel(Decimal("0"), Decimal("900")))
