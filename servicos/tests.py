@@ -191,3 +191,18 @@ class ProformaTests(BaseTest):
         s = novo_servico(self.projecto, 20)
         self.client.force_login(self.tecnico)
         self.assertEqual(self.client.get(f"/servicos/{s.pk}/proforma/").status_code, 403)
+
+
+class RenovarHtmxTests(BaseTest):
+    def test_renovar_via_htmx_devolve_hx_redirect(self):
+        from datetime import timedelta
+        from django.utils import timezone
+        s = novo_servico(self.projecto, 10)
+        self.client.force_login(self.gestor)
+        r = self.client.post(f"/servicos/{s.pk}/renovar/", {
+            "data": timezone.localdate().isoformat(),
+            "valor": "50000",
+            "nova_expiracao": (s.expira_em + timedelta(days=365)).isoformat(),
+        }, HTTP_HX_REQUEST="true")
+        self.assertEqual(r.status_code, 204)
+        self.assertEqual(r["HX-Redirect"], f"/servicos/{s.pk}/")

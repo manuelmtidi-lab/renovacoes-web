@@ -1,4 +1,4 @@
-const CACHE = "renovacoes-v4";
+const CACHE = "renovacoes-v5";
 const OFFLINE = "/offline/";
 
 self.addEventListener("install", (e) => {
@@ -27,18 +27,18 @@ self.addEventListener("fetch", (e) => {
     return;
   }
 
-  // Ficheiros estáticos: responde da cache e actualiza em segundo plano.
+  // Ficheiros estáticos: rede primeiro (vês sempre a versão nova). Sem rede, usa a cache.
   if (url.pathname.startsWith("/static/")) {
     e.respondWith(
-      caches.open(CACHE).then((c) =>
-        c.match(req).then((guardado) => {
-          const rede = fetch(req).then((r) => {
-            if (r.ok) c.put(req, r.clone());
-            return r;
-          }).catch(() => guardado);
-          return guardado || rede;
+      fetch(req)
+        .then((r) => {
+          if (r.ok) {
+            const copia = r.clone();
+            caches.open(CACHE).then((c) => c.put(req, copia));
+          }
+          return r;
         })
-      )
+        .catch(() => caches.match(req))
     );
   }
 });

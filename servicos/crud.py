@@ -434,10 +434,13 @@ def servico_renovar(request, pk):
                 servico.tratamento = Servico.Tratamento.POR_CONTACTAR
                 servico.save(update_fields=["expira_em", "tratamento"])
             messages.success(request, "Renovação registada.")
-            resposta = redirect("servico_detalhe", pk=servico.pk)
             if getattr(request, "htmx", None):
-                resposta["HX-Redirect"] = resposta["Location"]
-            return resposta
+                from django.http import HttpResponse
+                from django.urls import reverse
+                resposta = HttpResponse(status=204)
+                resposta["HX-Redirect"] = reverse("servico_detalhe", args=[servico.pk])
+                return resposta
+            return redirect("servico_detalhe", pk=servico.pk)
     else:
         from .models import somar_meses
         proxima = somar_meses(servico.expira_em, servico.ciclo)
