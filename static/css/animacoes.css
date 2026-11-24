@@ -374,3 +374,11 @@ html.a-abrir { overflow: hidden; }
   .universo::before { animation: nebulosa-a 38s ease-in-out infinite alternate; }
   .universo::after { animation: nebulosa-b 46s ease-in-out infinite alternate; }
 }
+
+/* parte-10: modo claro */
+:where(:root:not(.dark)) .cartao {
+  box-shadow: 0 1px 2px rgb(16 19 12 / 0.05), 0 10px 26px -18px rgb(16 19 12 / 0.18);
+}
+:where(:root:not(.dark)) .nav-item[aria-current="page"] {
+  background: var(--c-accent-soft);
+}

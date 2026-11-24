@@ -16,12 +16,12 @@
 :root {
   color-scheme: light;
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
-  --c-bg: #ffffff;
-  --c-surface: #f7f7f7;
-  --c-surface-2: #efefef;
-  --c-line: #dcdcdc;
-  --c-ink: #111111;
-  --c-muted: #5c5c5c;
+  --c-bg: #dfe2d6;
+  --c-surface: #e9ebe2;
+  --c-surface-2: #d6dacd;
+  --c-line: #bfc4b3;
+  --c-ink: #14170f;
+  --c-muted: #474c3d;
   --c-accent: #4a7500;
   --c-accent-soft: rgb(74 117 0 / 0.1);
   --c-accent-ink: #ffffff;

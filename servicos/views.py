@@ -69,3 +69,11 @@ def inicio(request):
         "proximos": activos.filter(expira_em__lte=hoje + timedelta(days=60))[:8],
     }
     return render(request, "inicio.html", contexto)
+
+
+def entrada(request):
+    """Raiz do site: painel para quem tem sessão, página de entrada para os outros."""
+    if request.user.is_authenticated:
+        return inicio(request)
+    from django.shortcuts import render
+    return render(request, "entrada.html")

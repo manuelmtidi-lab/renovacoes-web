@@ -281,7 +281,8 @@
 
   function desenhar(t) {
     ctx.clearRect(0, 0, w, h);
-    var fator = claro ? 0.55 : 1;
+    if (claro) return;
+    var fator = 1;
     for (var i = 0; i < estrelas.length; i++) {
       var s = estrelas[i];
       var v = 3 + s.d * 11;
@@ -370,4 +371,52 @@
   window.addEventListener("pagehide", function () {
     try { sessionStorage.setItem("universo-t", String(Math.floor(tempo))); } catch (e) {}
   });
+})();
+
+/* parte-9: contadores (números dos cartões sobem de 0) */
+(function () {
+  "use strict";
+
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  var els = [].slice.call(document.querySelectorAll("[data-contador]"));
+  if (!els.length) return;
+
+  var raiz = document.documentElement;
+
+  function agrupar(n, sep) {
+    var t = String(n);
+    return sep ? t.replace(/\B(?=(\d{3})+(?!\d))/g, sep) : t;
+  }
+
+  function correr() {
+    els.forEach(function (el, i) {
+      var final = el.textContent.trim();
+      var alvo = parseInt(final.replace(/\D/g, ""), 10);
+      if (isNaN(alvo) || alvo === 0) return;
+      var sep = (final.match(/\D/) || [""])[0];
+      var inicio = null;
+      var espera = 120 + i * 80;
+      el.textContent = "0";
+      el.setAttribute("aria-label", final);
+
+      function passo(agora) {
+        if (inicio === null) inicio = agora;
+        var k = Math.min((agora - inicio) / 1200, 1);
+        var e = k === 1 ? 1 : 1 - Math.pow(2, -10 * k);
+        el.textContent = agrupar(Math.round(alvo * e), sep);
+        if (k < 1) requestAnimationFrame(passo);
+        else el.textContent = final;
+      }
+      setTimeout(function () { requestAnimationFrame(passo); }, espera);
+    });
+  }
+
+  if (raiz.classList.contains("a-abrir")) {
+    var obs = new MutationObserver(function () {
+      if (!raiz.classList.contains("a-abrir")) { obs.disconnect(); correr(); }
+    });
+    obs.observe(raiz, { attributes: true, attributeFilter: ["class"] });
+  } else {
+    correr();
+  }
 })();

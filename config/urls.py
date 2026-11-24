@@ -11,5 +11,5 @@ urlpatterns = [
     path("manifest.json", TemplateView.as_view(template_name="pwa/manifest.json", content_type="application/manifest+json"), name="manifest"),
     path("offline/", TemplateView.as_view(template_name="offline.html"), name="offline"),
     path("", include("servicos.urls")),
-    path("", views.inicio, name="inicio"),
+    path("", views.entrada, name="inicio"),
 ]

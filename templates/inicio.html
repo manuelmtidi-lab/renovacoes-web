@@ -43,7 +43,7 @@
   if (!el || !window.Chart) return;
   var d = JSON.parse(document.getElementById("dados-grafico").textContent);
   var cor = function (id) { return getComputedStyle(document.getElementById(id)).color; };
-  new Chart(el, {
+  var grafico = new Chart(el, {
     type: "bar",
     data: { labels: d.etiquetas, datasets: [{ data: d.valores, backgroundColor: cor("cor-accent"), borderRadius: 4 }] },
     options: {
@@ -56,6 +56,13 @@
       }
     }
   });
+  new MutationObserver(function () {
+    grafico.data.datasets[0].backgroundColor = cor("cor-accent");
+    grafico.options.scales.x.ticks.color = cor("cor-muted");
+    grafico.options.scales.y.ticks.color = cor("cor-muted");
+    grafico.options.scales.y.grid.color = cor("cor-line");
+    grafico.update("none");
+  }).observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
 })();
 </script>
 
