@@ -27,6 +27,7 @@
   var t = 2;
   var deslocamento = 0;
   var ultimo = 0;
+  var pulsos = [];
 
   function lerCor() {
     var raiz = document.documentElement;
@@ -58,7 +59,7 @@
     var camX = rato.ax * 1.4;
     var amp = 0.3 + rato.ay * 0.1;
     var desvio = deslocamento % DZ;
-    var i, j, k, zv, zm, s, x, y, calma, a;
+    var i, j, k, zv, zm, s, x, y, calma, a, b, p, d, idade, onda;
 
     // 1) Projecção de todos os pontos (ondas no relevo)
     for (i = 0; i <= LINHAS; i++) {
@@ -66,12 +67,18 @@
       zm = zv + deslocamento;               // posição no mundo (o relevo fica parado)
       s = foco / zv;
       calma = Math.min(1, Math.max(0, (zv - 1.4) / 3.5)); // ondas mais calmas perto
+      onda = 0;                             // onda que rola ao clicar
+      for (p = 0; p < pulsos.length; p++) {
+        idade = t - pulsos[p];
+        d = zv - (Z_PERTO + idade * 7);
+        onda += 0.32 * Math.exp(-d * d / 0.5) * Math.max(0, 1 - idade / 3.2);
+      }
       for (j = 0; j < N; j++) {
         x = (j - COLUNAS / 2) * DX;
         y = amp * calma * (
           0.6 * Math.sin(x * 0.9 + zm * 0.95 + t * 1.1) +
           0.4 * Math.sin(x * 0.35 - zm * 1.4 + t * 0.7)
-        );
+        ) + onda;
         k = i * N + j;
         px[k] = W / 2 + (x - camX) * s;
         py[k] = horizonte + (ALTURA_CAMERA - y) * s;
@@ -95,6 +102,17 @@
       }
       ctx.stroke();
     }
+
+    // 3) Pontos que brilham nos cruzamentos
+    for (i = 1; i < LINHAS; i += 3) {
+      a = Math.pow(1 - i / (LINHAS + 1), 1.7) * forca;
+      for (j = 2; j < N; j += 5) {
+        b = 0.5 + 0.5 * Math.sin(t * 2.2 + i * 0.9 + j * 1.7);
+        ctx.fillStyle = "rgba(" + cor + "," + (a * b).toFixed(3) + ")";
+        k = i * N + j;
+        ctx.fillRect(px[k] - 1.5, py[k] - 1.5, 3, 3);
+      }
+    }
   }
 
   function ciclo(agora) {
@@ -102,6 +120,7 @@
     if (!(dt > 0) || dt > 0.05) dt = 0.016;
     ultimo = agora;
     t += dt;
+    while (pulsos.length && t - pulsos[0] > 3.5) pulsos.shift();
     deslocamento += dt * 0.9;
     var k = 1 - Math.exp(-dt * 4);
     rato.ax += (rato.x - rato.ax) * k;
@@ -125,6 +144,11 @@
       rato.x = (e.clientX / W) * 2 - 1;
       rato.y = (e.clientY / H) * 2 - 1;
     }, { passive: true });
+    window.addEventListener("pointerdown", function () {
+      pulsos.push(t);
+      if (pulsos.length > 3) pulsos.shift();
+    }, { passive: true });
+    pulsos.push(t);
     window.requestAnimationFrame(ciclo);
   }
 })();

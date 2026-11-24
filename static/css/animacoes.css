@@ -1,0 +1,165 @@
+/* Animações do painel e do login. Ver DESIGN.md (movimento 8 em 10). */
+/* parte-1: base */
+:root {
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-mola: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --c-brilho: #bff230;
+}
+
+/* Campos: borda verde e brilho suave ao focar */
+input:not([type="checkbox"]):not([type="radio"]),
+select,
+textarea {
+  transition: border-color 180ms var(--ease), box-shadow 220ms var(--ease), background-color 180ms var(--ease);
+}
+input:not([type="checkbox"]):not([type="radio"]):focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--c-accent);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--c-accent) 22%, transparent);
+}
+
+/* Barra lateral: bloco que desliza entre os itens (o JS liga a classe nav-js) */
+.nav-js { position: relative; }
+.nav-js .nav-item::before { display: none; }
+.nav-js .nav-item:hover,
+.nav-js .nav-item[aria-current="page"] { background: transparent; }
+.nav-pill {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 0;
+  opacity: 0;
+  pointer-events: none;
+  border-left: 2px solid var(--c-accent);
+  border-radius: 2px;
+  background: linear-gradient(90deg, color-mix(in oklab, var(--c-accent) 18%, transparent), color-mix(in oklab, var(--c-accent) 3%, transparent));
+  transition: transform 340ms var(--ease-mola), height 340ms var(--ease-mola), opacity 200ms var(--ease);
+}
+
+/* parte-2: movimento no painel */
+@keyframes linha-entra { from { opacity: 0; transform: translateY(8px); } }
+@keyframes msg-entra { from { opacity: 0; transform: translateY(-10px) scale(0.98); } }
+@keyframes progresso { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes vt-sai { to { opacity: 0; transform: translateY(-6px); } }
+@keyframes vt-entra { from { opacity: 0; transform: translateY(14px); } }
+
+@media (prefers-reduced-motion: no-preference) {
+
+  /* Luz ambiente que segue o rato (só com rato) */
+  @media (hover: hover) and (pointer: fine) {
+    html::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background: radial-gradient(30rem circle at var(--sx, 60%) var(--sy, -10%), color-mix(in oklab, var(--c-accent) 9%, transparent), transparent 70%);
+    }
+  }
+
+  /* Cartões com número: levantam, brilham e o ícone balança */
+  .cartao.animar-entrada { animation-fill-mode: backwards; }
+  .cartao[data-tom], a.cartao {
+    transition: transform 280ms var(--ease), border-color 160ms var(--ease), box-shadow 280ms var(--ease);
+  }
+  .cartao[data-tom]:hover, a.cartao:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 32px -14px color-mix(in oklab, var(--tom, var(--c-accent)) 55%, transparent);
+  }
+  .cartao .icone-tom { transition: transform 280ms var(--ease-mola), box-shadow 280ms var(--ease); }
+  .cartao:hover .icone-tom {
+    transform: translateY(-2px) rotate(-6deg);
+    box-shadow: 0 0 18px color-mix(in oklab, var(--tom, var(--c-accent)) 45%, transparent);
+  }
+
+  /* Tabelas: as 6 primeiras linhas entram em cascata e o texto desliza no hover */
+  tbody tr { animation: linha-entra 420ms var(--ease) backwards; }
+  tbody tr:nth-child(2) { animation-delay: 45ms; }
+  tbody tr:nth-child(3) { animation-delay: 90ms; }
+  tbody tr:nth-child(4) { animation-delay: 135ms; }
+  tbody tr:nth-child(5) { animation-delay: 180ms; }
+  tbody tr:nth-child(6) { animation-delay: 225ms; }
+  tbody tr:nth-child(n+7) { animation: none; }
+  .linha td:first-child > * { transition: transform 220ms var(--ease); }
+  .linha:hover td:first-child > * { transform: translateX(4px); }
+
+  /* Botões de submeter: varrimento de luz e resposta ao clique */
+  button[type="submit"] {
+    position: relative;
+    overflow: hidden;
+    transition: transform 140ms var(--ease), background-color 160ms var(--ease), color 160ms var(--ease), opacity 160ms var(--ease), border-color 160ms var(--ease);
+  }
+  button[type="submit"]::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(105deg, transparent 38%, rgb(255 255 255 / 0.3) 50%, transparent 62%);
+    transform: translateX(-130%);
+  }
+  button[type="submit"]:hover::after { transform: translateX(130%); transition: transform 650ms var(--ease); }
+  button[type="submit"]:active { transform: scale(0.97); }
+
+  /* Mensagens entram com mola */
+  .msg { animation: msg-entra 480ms var(--ease-mola) backwards; }
+
+  /* Barra de progresso do scroll no topo */
+  @supports (animation-timeline: scroll()) {
+    body::after {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      z-index: 60;
+      transform-origin: left;
+      transform: scaleX(0);
+      background: linear-gradient(90deg, var(--c-accent), var(--c-brilho));
+      animation: progresso linear both;
+      animation-timeline: scroll(root);
+    }
+  }
+
+  /* Transição entre páginas: a antiga sai, a nova sobe */
+  ::view-transition-old(root) { animation: 160ms var(--ease) both vt-sai; }
+  ::view-transition-new(root) { animation: 360ms var(--ease) both vt-entra; }
+}
+
+/* parte-3: movimento no login */
+@keyframes palavra { from { opacity: 0; transform: translateY(0.55em); } }
+@keyframes respirar {
+  0%, 100% { box-shadow: 0 0 0 0 transparent; }
+  50% { box-shadow: 0 0 22px -2px color-mix(in oklab, var(--c-accent) 55%, transparent); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+
+  /* Cartão que inclina a seguir o rato, com reflexo de luz */
+  .login-cartao { transition: transform 600ms var(--ease); will-change: transform; }
+  .login-cartao.inclinando { transition: transform 90ms linear; }
+  .login-cartao::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+    background: radial-gradient(18rem circle at var(--gx, 50%) var(--gy, 0%), color-mix(in oklab, var(--c-accent) 16%, transparent), transparent 65%);
+    transition: opacity 300ms var(--ease);
+  }
+  .login-cartao:hover::after { opacity: 1; }
+
+  /* Título: palavras sobem uma a uma (o JS separa as palavras) */
+  .login-cartao h1 .pal {
+    display: inline-block;
+    animation: palavra 650ms var(--ease) backwards;
+    animation-delay: calc(var(--w, 0) * 90ms + 250ms);
+  }
+
+  /* Botão do Google respira de leve até passares o rato */
+  .login-botao { animation: respirar 3.2s ease-in-out 1.4s infinite; }
+  .login-botao:hover { animation: none; }
+}

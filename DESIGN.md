@@ -10,7 +10,7 @@ Sistema de design do projecto. Mistura três fontes:
 | Dial | Valor | Porquê |
 |---|---|---|
 | VARIANCE | 3 | Painel de trabalho: layout previsível, nada de composições "artísticas". |
-| MOTION | 6 | Vivo, mas sem atrapalhar quem usa a ferramenta todos os dias. |
+| MOTION | 8 | Vivo, mas sem atrapalhar quem usa a ferramenta todos os dias. |
 | DENSITY | 8 | Muita informação por ecrã, como um painel técnico. |
 
 ## 2. Atmosfera (estilo NVIDIA)
