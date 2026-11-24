@@ -30,6 +30,7 @@
       <div class="flex justify-between gap-4 py-2.5"><dt class="text-muted">Estado</dt><dd>{% if servico.estado == "activo" %}{% include "components/badge.html" with estado=servico.estado_alerta %}{% else %}<span class="tag">Cancelado</span>{% endif %}</dd></div>
       <div class="flex justify-between gap-4 py-2.5"><dt class="text-muted">Fornecedor</dt><dd class="text-right font-medium">{{ servico.fornecedor|default:"—" }}</dd></div>
       <div class="flex justify-between gap-4 py-2.5"><dt class="text-muted">Início</dt><dd class="font-medium tabular-nums">{{ servico.inicio|date:"d/m/Y" }}</dd></div>
+      <div class="flex justify-between gap-4 py-2.5"><dt class="text-muted">Ciclo</dt><dd class="font-medium">{{ servico.get_ciclo_display }}</dd></div>
       <div class="flex justify-between gap-4 py-2.5"><dt class="text-muted">Expira em</dt><dd class="font-medium tabular-nums">{{ servico.expira_em|date:"d/m/Y" }}</dd></div>
       {% if servico.estado == "activo" %}
       <div class="flex justify-between gap-4 py-2.5"><dt class="text-muted">Faltam</dt><dd class="font-medium">{% if servico.dias_para_expirar < 0 %}{% with n=servico.dias_para_expirar|cut:"-" %}expirou há {{ n }} dia{{ n|pluralize }}{% endwith %}{% elif servico.dias_para_expirar == 0 %}expira hoje{% else %}{{ servico.dias_para_expirar }} dia{{ servico.dias_para_expirar|pluralize }}{% endif %}</dd></div>

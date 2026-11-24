@@ -149,3 +149,15 @@ class DiferencaSslTests(SimpleTestCase):
         self.assertEqual(dias_de_diferenca(date(2026, 12, 10), date(2026, 12, 1)), 9)
         self.assertEqual(dias_de_diferenca(date(2026, 12, 1), date(2026, 12, 10)), -9)
         self.assertEqual(dias_de_diferenca(date(2026, 12, 1), date(2026, 12, 1)), 0)
+
+
+class SomarMesesTests(SimpleTestCase):
+    def test_somar_meses(self):
+        from datetime import date
+        from servicos.models import somar_meses
+        self.assertEqual(somar_meses(date(2026, 1, 31), 1), date(2026, 2, 28))
+        self.assertEqual(somar_meses(date(2027, 1, 31), 1), date(2027, 2, 28))
+        self.assertEqual(somar_meses(date(2028, 1, 31), 1), date(2028, 2, 29))
+        self.assertEqual(somar_meses(date(2028, 2, 29), 12), date(2029, 2, 28))
+        self.assertEqual(somar_meses(date(2026, 11, 24), 3), date(2027, 2, 24))
+        self.assertEqual(somar_meses(date(2026, 12, 15), 24), date(2028, 12, 15))

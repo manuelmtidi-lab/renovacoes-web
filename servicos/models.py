@@ -70,6 +70,14 @@ class Servico(models.Model):
         PROFORMA = "proforma", "Proforma enviada"
         PAGO = "pago", "Pago"
 
+    class Ciclo(models.IntegerChoices):
+        MENSAL = 1, "Mensal"
+        TRIMESTRAL = 3, "Trimestral"
+        SEMESTRAL = 6, "Semestral"
+        ANUAL = 12, "Anual"
+        BIENAL = 24, "Bienal"
+
+    ciclo = models.PositiveSmallIntegerField("ciclo de renovação", choices=Ciclo.choices, default=Ciclo.ANUAL)
     tratamento = models.CharField("tratamento", max_length=15, choices=Tratamento.choices, default=Tratamento.POR_CONTACTAR)
 
     class Meta:
@@ -189,3 +197,13 @@ class Nota(models.Model):
 
     def __str__(self):
         return self.texto[:40]
+
+
+def somar_meses(data, meses):
+    """Soma meses a uma data; se o dia não existir no mês final, usa o último dia (31/01 + 1 mês = 28/02)."""
+    import calendar
+    total = data.year * 12 + (data.month - 1) + meses
+    ano, mes = divmod(total, 12)
+    mes += 1
+    dia = min(data.day, calendar.monthrange(ano, mes)[1])
+    return data.replace(year=ano, month=mes, day=dia)

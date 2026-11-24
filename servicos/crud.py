@@ -439,9 +439,8 @@ def servico_renovar(request, pk):
                 resposta["HX-Redirect"] = resposta["Location"]
             return resposta
     else:
-        proxima = servico.expira_em.replace(year=servico.expira_em.year + 1) if not (
-            servico.expira_em.month == 2 and servico.expira_em.day == 29
-        ) else servico.expira_em.replace(year=servico.expira_em.year + 1, day=28)
+        from .models import somar_meses
+        proxima = somar_meses(servico.expira_em, servico.ciclo)
         form = RenovacaoForm(
             servico=servico,
             initial={"data": timezone.localdate(), "valor": servico.preco_venda, "nova_expiracao": proxima},

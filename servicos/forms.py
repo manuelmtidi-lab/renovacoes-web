@@ -53,6 +53,7 @@ class ServicoForm(EstiloMixin, forms.ModelForm):
             "preco_venda",
             "inicio",
             "expira_em",
+            "ciclo",
             "estado",
         ]
         widgets = {
