@@ -140,3 +140,12 @@ class TratamentoTests(BaseTest):
         self.assertEqual(s.tratamento, "por_contactar")
         self.assertEqual(s.notas.count(), 1)
         self.assertEqual(s.renovacoes.count(), 1)
+
+
+class DiferencaSslTests(SimpleTestCase):
+    def test_dias_de_diferenca(self):
+        from datetime import date
+        from servicos.management.commands.verificar_ssl import dias_de_diferenca
+        self.assertEqual(dias_de_diferenca(date(2026, 12, 10), date(2026, 12, 1)), 9)
+        self.assertEqual(dias_de_diferenca(date(2026, 12, 1), date(2026, 12, 10)), -9)
+        self.assertEqual(dias_de_diferenca(date(2026, 12, 1), date(2026, 12, 1)), 0)
