@@ -1,4 +1,4 @@
-const CACHE = "renovacoes-v2";
+const CACHE = "renovacoes-v3";
 const OFFLINE = "/offline/";
 
 self.addEventListener("install", (e) => {

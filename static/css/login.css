@@ -104,3 +104,54 @@
   .entra { animation: none; }
   .login-botao svg { transition: none; }
 }
+
+/* ---- rodape-login: página em coluna e logótipos da empresa e da escola ---- */
+@layer components {
+  .login-pagina {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding: 2.5rem 1rem 1.25rem;
+  }
+  .login-pagina > main { margin-block: auto; }
+
+  .rodape-login {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+  .rodape-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.375rem;
+  }
+  .rodape-item .login-rotulo { font-size: 0.5625rem; }
+  /* Placa clara fixa: os logótipos têm cores próprias e precisam de fundo claro nos dois temas */
+  .rodape-placa {
+    display: grid;
+    place-items: center;
+    height: 2rem;
+    padding: 0.25rem 0.5rem;
+    background: #fff;
+    border: 1px solid var(--c-line);
+    border-radius: 2px;
+    opacity: 0.9;
+    transition: transform 180ms var(--ease), opacity 180ms var(--ease), border-color 180ms var(--ease);
+  }
+  .rodape-placa img { display: block; height: 1.5rem; width: auto; max-width: none; }
+  .rodape-item:hover .rodape-placa {
+    transform: translateY(-2px);
+    opacity: 1;
+    border-color: var(--c-accent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rodape-placa { transition: none; }
+  .rodape-item:hover .rodape-placa { transform: none; }
+}
