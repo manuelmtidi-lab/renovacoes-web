@@ -131,3 +131,37 @@ class Alerta(models.Model):
 
     def __str__(self):
         return f"Alerta {self.dias_antes} dias - {self.servico}"
+
+
+# ---- WhatsApp: ligação com a mensagem já escrita ----
+def telefone_whatsapp(numero):
+    """Devolve só dígitos em formato internacional (Angola +244), ou "" se não servir."""
+    d = "".join(c for c in (numero or "") if c.isdigit())
+    if d.startswith("00"):
+        d = d[2:]
+    if len(d) == 9 and d.startswith("9"):
+        d = "244" + d
+    if d.startswith("244") and len(d) == 12:
+        return d
+    if len(d) >= 11 and not d.startswith("244"):
+        return d  # outro país, já com indicativo
+    return ""
+
+
+def _link_whatsapp(self):
+    from urllib.parse import quote
+    numero = telefone_whatsapp(self.projecto.cliente.telefone)
+    if not numero:
+        return ""
+    preco = f"{self.preco_venda:,.0f}".replace(",", ".")
+    verbo = "expirou a" if self.dias_para_expirar < 0 else "expira a"
+    texto = (
+        f"Bom dia, {self.projecto.cliente.nome}. "
+        f"O serviço {self.get_tipo_display()} do projecto {self.projecto.nome} "
+        f"{verbo} {self.expira_em:%d/%m/%Y}. "
+        f"A renovação custa {preco} Kz. Quer que renovemos?"
+    )
+    return f"https://wa.me/{numero}?text={quote(texto)}"
+
+
+Servico.link_whatsapp = property(_link_whatsapp)

@@ -78,3 +78,17 @@ class AlertasSemDuplicados(BaseTest):
         s.save()
         self.correr()
         self.assertEqual(len(mail.outbox), 2)
+
+
+from django.test import SimpleTestCase
+from servicos.models import telefone_whatsapp
+
+
+class TelefoneWhatsappTests(SimpleTestCase):
+    def test_formatos_de_angola(self):
+        for entrada in ("923 456 789", "923456789", "+244 923 456 789", "00244923456789", "(244) 923-456-789"):
+            self.assertEqual(telefone_whatsapp(entrada), "244923456789")
+
+    def test_invalidos(self):
+        for entrada in ("", None, "12345", "abc"):
+            self.assertEqual(telefone_whatsapp(entrada), "")

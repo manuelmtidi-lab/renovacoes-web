@@ -14,6 +14,7 @@
     </div>
     <div class="flex flex-wrap gap-2">
       {% if pode_editar and servico.estado == "activo" %}<button type="button" class="btn" hx-get="{% url 'servico_renovar' servico.pk %}" hx-target="#zona-renovar" hx-swap="innerHTML">Registar renovação</button>{% endif %}
+      {% if pode_editar and servico.estado == "activo" and servico.link_whatsapp %}<a href="{{ servico.link_whatsapp }}" target="_blank" rel="noopener noreferrer" class="btn">Avisar por WhatsApp</a>{% endif %}
       {% if pode_editar %}<a href="{% url 'servico_editar' servico.pk %}" class="btn">{% include "components/icone_extra.html" with nome="editar" classe="size-4" %} Editar</a>{% endif %}
       {% if pode_apagar %}<a href="{% url 'servico_apagar' servico.pk %}" class="btn btn-perigo">{% include "components/icone_extra.html" with nome="apagar" classe="size-4" %} Apagar</a>{% endif %}
     </div>
