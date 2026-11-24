@@ -176,3 +176,18 @@ class CambioTests(SimpleTestCase):
         self.assertTrue(taxa_plausivel(Decimal("920"), Decimal("900")))
         self.assertFalse(taxa_plausivel(Decimal("1500"), Decimal("900")))
         self.assertFalse(taxa_plausivel(Decimal("0"), Decimal("900")))
+
+
+class ProformaTests(BaseTest):
+    def test_gestor_recebe_pdf(self):
+        s = novo_servico(self.projecto, 20)
+        self.client.force_login(self.gestor)
+        r = self.client.get(f"/servicos/{s.pk}/proforma/")
+        self.assertEqual(r.status_code, 200)
+        self.assertEqual(r["Content-Type"], "application/pdf")
+        self.assertTrue(r.content.startswith(b"%PDF"))
+
+    def test_tecnico_nao_pode(self):
+        s = novo_servico(self.projecto, 20)
+        self.client.force_login(self.tecnico)
+        self.assertEqual(self.client.get(f"/servicos/{s.pk}/proforma/").status_code, 403)

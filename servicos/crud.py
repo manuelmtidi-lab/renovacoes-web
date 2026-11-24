@@ -462,3 +462,21 @@ def servico_tratamento(request, pk):
             Nota.objects.create(servico=servico, texto=texto, utilizador=request.user)
         messages.success(request, "Tratamento actualizado.")
     return redirect("servico_detalhe", pk=servico.pk)
+
+
+@exigir(*EDITAR)
+def servico_proforma(request, pk):
+    from decouple import config
+    from django.http import HttpResponse
+    from .proforma import gerar_proforma, numero_proforma
+    servico = get_object_or_404(servicos_visiveis(request), pk=pk, estado=Servico.Estado.ACTIVO)
+    empresa = {
+        "nome": config("EMPRESA_NOME", default=""),
+        "nif": config("EMPRESA_NIF", default=""),
+        "morada": config("EMPRESA_MORADA", default=""),
+        "iban": config("EMPRESA_IBAN", default=""),
+    }
+    pdf = gerar_proforma(servico, empresa)
+    resposta = HttpResponse(pdf, content_type="application/pdf")
+    resposta["Content-Disposition"] = f'inline; filename="{numero_proforma(servico, timezone.localdate())}.pdf"'
+    return resposta
