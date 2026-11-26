@@ -256,3 +256,18 @@ class ResumoSemanalTests(BaseTest):
     def test_so_admin_e_gestor_recebem(self):
         from servicos.management.commands.resumo_semanal import destinatarios_resumo
         self.assertEqual(destinatarios_resumo(), ["gestor@exemplo.ao"])
+
+
+class ExportarCsvTests(BaseTest):
+    def test_gestor_exporta_com_filtro(self):
+        novo_servico(self.projecto, 10)
+        self.client.force_login(self.gestor)
+        r = self.client.get("/servicos/exportar/?tipo=dominio")
+        self.assertEqual(r.status_code, 200)
+        self.assertIn("text/csv", r["Content-Type"])
+        self.assertTrue(r.content.startswith(b"\xef\xbb\xbf"))
+        self.assertNotIn("Custo", r.content.decode("utf-8-sig").splitlines()[0])
+
+    def test_tecnico_nao_exporta(self):
+        self.client.force_login(self.tecnico)
+        self.assertEqual(self.client.get("/servicos/exportar/").status_code, 403)

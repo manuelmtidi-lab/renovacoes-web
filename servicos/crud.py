@@ -356,9 +356,7 @@ def _filtrar_alerta(qs, alerta):
     return qs
 
 
-@login_required
-@vary_on_headers("HX-Request")
-def servico_lista(request):
+def _servicos_filtrados(request):
     q = request.GET.get("q", "").strip()
     tipo = _escolha(request.GET.get("tipo"), Servico.Tipo.choices)
     estado = _escolha(request.GET.get("estado"), Servico.Estado.choices)
@@ -379,6 +377,13 @@ def servico_lista(request):
     if cliente:
         qs = qs.filter(projecto__cliente_id=cliente)
     qs = _filtrar_alerta(qs, alerta)
+    return q, tipo, estado, alerta, cliente, qs
+
+
+@login_required
+@vary_on_headers("HX-Request")
+def servico_lista(request):
+    q, tipo, estado, alerta, cliente, qs = _servicos_filtrados(request)
 
     contexto = _contexto(
         request,
@@ -526,3 +531,30 @@ def actividade(request):
     from .models import Actividade
     itens = Actividade.objects.select_related("utilizador")[:200]
     return render(request, "actividade.html", {"itens": itens})
+
+
+def _seguro_csv(valor):
+    texto = "" if valor is None else str(valor)
+    return "'" + texto if texto[:1] in ("=", "+", "-", "@") else texto
+
+
+@exigir(*EDITAR)
+def servico_exportar(request):
+    import csv
+    from django.http import HttpResponse
+    from .models import registar
+    qs = _servicos_filtrados(request)[5].select_related("projecto__cliente")
+    resposta = HttpResponse(content_type="text/csv; charset=utf-8")
+    resposta["Content-Disposition"] = 'attachment; filename="servicos.csv"'
+    resposta.write("\ufeff")
+    w = csv.writer(resposta, delimiter=";")
+    w.writerow(["Cliente", "Projecto", "Tipo", "Fornecedor", "Início", "Expira em", "Estado", "Ciclo", "Tratamento", "Preço de venda (Kz)"])
+    n = 0
+    for x in qs:
+        w.writerow([_seguro_csv(v) for v in (
+            x.projecto.cliente.nome, x.projecto.nome, x.get_tipo_display(), x.fornecedor,
+            f"{x.inicio:%d/%m/%Y}", f"{x.expira_em:%d/%m/%Y}", x.get_estado_display(),
+            x.get_ciclo_display(), x.get_tratamento_display(), x.preco_venda)])
+        n += 1
+    registar(request.user, "exportou", "Serviços (CSV)", f"{n} linhas")
+    return resposta
