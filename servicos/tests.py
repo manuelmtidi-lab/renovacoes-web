@@ -234,3 +234,25 @@ class ActividadeTests(BaseTest):
         self.client.force_login(admin)
         self.client.post(f"/servicos/{s.pk}/apagar/")
         self.assertTrue(Actividade.objects.filter(acao="apagou").exists())
+
+
+class ResumoSemanalTests(BaseTest):
+    def test_sem_nada_nao_envia(self):
+        from django.utils import timezone
+        from servicos.management.commands.resumo_semanal import montar_resumo
+        self.assertIsNone(montar_resumo(timezone.localdate()))
+
+    def test_resumo_inclui_atrasados_e_proximos(self):
+        from django.utils import timezone
+        from servicos.management.commands.resumo_semanal import montar_resumo
+        novo_servico(self.projecto, -3)
+        novo_servico(self.projecto, 5)
+        novo_servico(self.projecto, 40)
+        assunto, texto = montar_resumo(timezone.localdate())
+        self.assertIn("1 em atraso, 1 a expirar", assunto)
+        self.assertIn("EM ATRASO (1)", texto)
+        self.assertIn("PRÓXIMOS 14 DIAS (1)", texto)
+
+    def test_so_admin_e_gestor_recebem(self):
+        from servicos.management.commands.resumo_semanal import destinatarios_resumo
+        self.assertEqual(destinatarios_resumo(), ["gestor@exemplo.ao"])
