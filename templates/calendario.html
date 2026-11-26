@@ -15,24 +15,23 @@
 </div>
 
 <div class="cartao sem-brilho mt-8 hidden overflow-x-auto md:block">
-  <table class="w-full table-fixed text-left text-sm">
+  <table class="cal">
     <thead class="border-b border-line bg-surface-2">
-      <tr>{% for d in "Seg Ter Qua Qui Sex Sáb Dom"|make_list|slice:":0" %}{% endfor %}
-        <th class="rotulo px-3 py-2.5">Seg</th><th class="rotulo px-3 py-2.5">Ter</th><th class="rotulo px-3 py-2.5">Qua</th>
+      <tr>        <th class="rotulo px-3 py-2.5">Seg</th><th class="rotulo px-3 py-2.5">Ter</th><th class="rotulo px-3 py-2.5">Qua</th>
         <th class="rotulo px-3 py-2.5">Qui</th><th class="rotulo px-3 py-2.5">Sex</th><th class="rotulo px-3 py-2.5">Sáb</th><th class="rotulo px-3 py-2.5">Dom</th>
       </tr>
     </thead>
     <tbody class="divide-y divide-line">
       {% for sem in semanas %}
-      <tr class="divide-x divide-line align-top">
+      <tr>
         {% for c in sem %}
-        <td class="h-28 p-2 {% if not c.dia %}bg-surface-2/40{% endif %}">
+        <td{% if not c.dia %} class="vazio"{% endif %}>
           {% if c.dia %}
-          <p class="text-xs tabular-nums {% if c.hoje %}font-bold text-accent{% else %}text-muted{% endif %}">{{ c.dia }}{% if c.hoje %} · hoje{% endif %}</p>
+          <p class="dia{% if c.hoje %} hoje{% endif %}">{{ c.dia }}{% if c.hoje %} · hoje{% endif %}</p>
           <ul class="mt-1 space-y-1">
             {% for s in c.servicos %}
             <li data-estado="{{ s.estado_alerta }}">
-              <a href="{% url 'servico_detalhe' s.pk %}" class="block truncate border-l-2 bg-[var(--tom-soft)] px-1.5 py-0.5 text-xs hover:text-accent" style="border-color: var(--tom)" title="{{ s.projecto.cliente.nome }}">{{ s.get_tipo_display }} · {{ s.projecto.nome }}</a>
+              <a href="{% url 'servico_detalhe' s.pk %}" class="cal-item" title="{{ s.projecto.cliente.nome }}">{{ s.get_tipo_display }} · {{ s.projecto.nome }}</a>
             </li>
             {% endfor %}
           </ul>
@@ -51,7 +50,7 @@
     <p class="rotulo">Dia {{ c.dia }}{% if c.hoje %} · hoje{% endif %}</p>
     <ul class="mt-2 space-y-2 text-sm">
       {% for s in c.servicos %}
-      <li data-estado="{{ s.estado_alerta }}"><a href="{% url 'servico_detalhe' s.pk %}" class="block border-l-2 bg-[var(--tom-soft)] px-2 py-1" style="border-color: var(--tom)">{{ s.get_tipo_display }} · {{ s.projecto.nome }}<span class="block text-xs text-muted">{{ s.projecto.cliente.nome }}</span></a></li>
+      <li data-estado="{{ s.estado_alerta }}"><a href="{% url 'servico_detalhe' s.pk %}" class="cal-item-m">{{ s.get_tipo_display }} · {{ s.projecto.nome }}<span class="block text-xs text-muted">{{ s.projecto.cliente.nome }}</span></a></li>
       {% endfor %}
     </ul>
   </li>
