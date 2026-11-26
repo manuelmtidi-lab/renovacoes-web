@@ -13,9 +13,9 @@ html[data-theme="light"] {
   --primary-fg: #ffffff;
   --secondary: #111111;
   --accent: #76b900;
-  --body-fg: #111111;
-  --body-bg: #ffffff;
-  --body-quiet-color: #5c5c5c;
+  --body-fg: #14170f;
+  --body-bg: #dfe2d6;
+  --body-quiet-color: #474c3d;
   --body-medium-color: #333333;
   --body-loud-color: #000000;
   --header-color: #f5f5f5;
@@ -28,15 +28,15 @@ html[data-theme="light"] {
   --link-fg: #4a7500;
   --link-hover-color: #2f4d00;
   --link-selected-fg: #4a7500;
-  --hairline-color: #e4e4e4;
-  --border-color: #dcdcdc;
+  --hairline-color: #cfd3c4;
+  --border-color: #bfc4b3;
   --error-fg: #c62828;
   --message-success-bg: #eaf5d6;
   --message-warning-bg: #fff3d6;
   --message-error-bg: #fde8e6;
   --darkest-bg: #111111;
   --darker-bg: #5c5c5c;
-  --darkened-bg: #f7f7f7;
+  --darkened-bg: #e9ebe2;
   --selected-bg: #eef5e1;
   --selected-row: #f3f8ea;
   --button-fg: #ffffff;
@@ -158,3 +158,114 @@ input[type="url"], input[type="date"], input[type="time"], select, textarea {
 #header { border-bottom: 1px solid var(--hairline-color); }
 #site-name a { font-weight: 700; letter-spacing: -0.01em; }
 #changelist table thead th { font-weight: 600; }
+
+/* parte-2: identidade do painel */
+:root { --c-accent: var(--button-bg); --c-line: var(--border-color); --ease: cubic-bezier(0.22, 1, 0.36, 1); }
+
+body { isolation: isolate; }
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    radial-gradient(60rem 24rem at 50% -6rem, color-mix(in oklab, var(--button-bg) 14%, transparent), transparent 70%),
+    linear-gradient(to right, color-mix(in oklab, var(--border-color) 55%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklab, var(--border-color) 55%, transparent) 1px, transparent 1px);
+  background-size: auto, 48px 48px, 48px 48px;
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, transparent 75%);
+  mask-image: linear-gradient(to bottom, #000 0%, transparent 75%);
+}
+
+/* Título com o logótipo */
+.admin-marca { display: inline-flex; align-items: center; gap: 0.625rem; }
+#header .logo-marca { --c-accent: #76b900; --c-line: #333333; flex: none; }
+#header { border-bottom: 1px solid var(--hairline-color); box-shadow: 0 1px 0 color-mix(in oklab, #76b900 35%, transparent); }
+
+/* Blocos como cartões do painel: borda fina e quadrado verde no canto */
+#content .module {
+  position: relative;
+  overflow: hidden;
+  background: var(--darkened-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 2px;
+  transition: border-color 150ms var(--ease);
+}
+#content .module::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 10px;
+  height: 10px;
+  background: var(--button-bg);
+  transform: scale(0.8);
+  transform-origin: top right;
+  transition: transform 180ms var(--ease);
+}
+#content .module:hover { border-color: color-mix(in oklab, var(--button-bg) 45%, var(--border-color)); }
+#content .module:hover::before { transform: scale(1); }
+.module caption, .module h2 {
+  padding: 0.625rem 0.75rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--body-quiet-color);
+  background: color-mix(in oklab, var(--border-color) 45%, var(--darkened-bg));
+}
+.module caption a, .module h2 a { color: inherit; }
+.module caption a:hover, .module h2 a:hover { color: var(--link-fg); }
+
+/* Painel inicial: os blocos das aplicações em grelha */
+.dashboard #content-main { display: grid; grid-template-columns: repeat(auto-fill, minmax(22rem, 1fr)); gap: 1rem; align-content: start; }
+.dashboard #content-main .module { margin: 0; }
+
+/* Linhas: barra verde à esquerda no hover */
+.module tbody tr:hover > *, #result_list tbody tr:hover > * { background: var(--selected-row); }
+.module tbody tr:hover > :first-child, #result_list tbody tr:hover > :first-child { box-shadow: inset 2px 0 0 var(--button-bg); }
+
+/* parte-3: formularios e listas */
+input[type="text"], input[type="email"], input[type="password"], input[type="number"],
+input[type="url"], input[type="date"], input[type="time"], input[type="search"], select, textarea {
+  color: var(--body-fg);
+  background: var(--body-bg);
+  border: 1px solid var(--border-color);
+  transition: border-color 160ms var(--ease), box-shadow 200ms var(--ease);
+}
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--button-bg);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--button-bg) 22%, transparent);
+}
+fieldset.module { padding: 0; }
+.form-row { border-bottom: 1px solid var(--hairline-color); }
+.form-row label, .aligned label { font-weight: 600; }
+.errornote, ul.errorlist li { border-radius: 2px; }
+
+/* Botões */
+.button, input[type="submit"], input[type="button"], .object-tools a { transition: background-color 160ms var(--ease), transform 140ms var(--ease); }
+@media (prefers-reduced-motion: no-preference) {
+  .button:hover, input[type="submit"]:hover, .object-tools a:hover { transform: translateY(-1px); }
+  .button:active, input[type="submit"]:active { transform: scale(0.97); }
+}
+.submit-row { background: var(--darkened-bg); border: 1px solid var(--border-color); border-radius: 2px; }
+.object-tools a { border-radius: 2px; }
+
+/* Listas: pesquisa, filtros e paginação */
+#changelist-filter { background: var(--darkened-bg); border: 1px solid var(--border-color); border-radius: 2px; }
+#changelist-filter h2 { background: color-mix(in oklab, var(--border-color) 45%, var(--darkened-bg)); color: var(--body-quiet-color); }
+#changelist .actions { background: var(--darkened-bg); border-radius: 2px; }
+#changelist table thead th { background: color-mix(in oklab, var(--border-color) 45%, var(--darkened-bg)); }
+.paginator a:link, .paginator a:visited { border-radius: 2px; }
+.paginator .this-page { color: var(--button-fg); background: var(--button-bg); border-radius: 2px; padding: 2px 6px; }
+
+/* Mensagens com a barra de cor do estado */
+.messagelist li { border-left: 3px solid var(--button-bg); border-radius: 2px; }
+.messagelist li.error { border-left-color: var(--error-fg); }
+.messagelist li.warning { border-left-color: #ef9100; }
+
+/* Página de entrada do admin */
+.login #container { background: var(--darkened-bg); border: 1px solid var(--border-color); border-radius: 2px; overflow: hidden; }
+.login #content { padding: 1.5rem; }
+.login #header { justify-content: center; }

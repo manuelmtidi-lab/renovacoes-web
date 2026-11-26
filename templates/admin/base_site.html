@@ -3,10 +3,10 @@
 
 {% block title %}{% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | Administração · Renovações{% endblock %}
 
-{% block extrastyle %}{{ block.super }}<link rel="stylesheet" href="{% static 'css/admin.css' %}">{% endblock %}
+{% block extrastyle %}{{ block.super }}<link rel="stylesheet" href="{% static 'css/admin.css' %}?v=2">{% endblock %}
 
 {% block branding %}
-<div id="site-name"><a href="{% url 'admin:index' %}">Renovações · Administração</a></div>
+<div id="site-name"><a href="{% url 'admin:index' %}" class="admin-marca">{% include "components/logo.html" with tamanho="28" %}<span>Renovações · Administração</span></a></div>
 {% endblock %}
 
 {% block userlinks %}<a href="{% url 'inicio' %}">Painel</a> {{ block.super }}{% endblock %}
