@@ -10,6 +10,7 @@ urlpatterns = [
     path("sw.js", TemplateView.as_view(template_name="pwa/sw.js", content_type="application/javascript"), name="sw"),
     path("manifest.json", TemplateView.as_view(template_name="pwa/manifest.json", content_type="application/manifest+json"), name="manifest"),
     path("offline/", TemplateView.as_view(template_name="offline.html"), name="offline"),
+    path("contacto/", views.contacto, name="contacto"),
     path("", include("servicos.urls")),
     path("", views.entrada, name="inicio"),
 ]

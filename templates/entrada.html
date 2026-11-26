@@ -15,7 +15,7 @@
   </script>
   {% tailwind_css %}
   <link rel="stylesheet" href="{% static 'css/login.css' %}?v=2">
-  <link rel="stylesheet" href="{% static 'css/animacoes.css' %}?v=11">
+  <link rel="stylesheet" href="{% static 'css/animacoes.css' %}?v=13">
   <link rel="manifest" href="{% url 'manifest' %}">
   <meta name="theme-color" content="#0a0a0a">
   <link rel="icon" href="{% static 'icons/icon-192.png' %}" type="image/png">
@@ -25,15 +25,20 @@
   <div class="login-brilho" aria-hidden="true"></div>
 
   <div class="relative z-10 flex min-h-screen flex-col">
-    <header class="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-5 lg:px-10">
+    <header class="entrada-topo">
+    <div class="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-4 lg:px-10">
       <a href="{% url 'inicio' %}" class="flex items-center gap-2.5">
         {% include "components/logo.html" with tamanho="32" %}
         <span class="text-sm font-bold">Renovações</span>
       </a>
       <nav class="flex items-center gap-2" aria-label="Principal">
+        <a href="#funcionalidades" class="topo-link">Funcionalidades</a>
+        <a href="#como-usar" class="topo-link">Como usar</a>
+        <a href="#contactos" class="topo-link">Contactos</a>
         <a href="{% url 'account_login' %}" class="inline-flex h-10 items-center px-4 text-sm font-semibold text-muted transition-colors hover:text-ink">Entrar</a>
         <a href="{% url 'account_signup' %}" class="inline-flex h-10 items-center border border-accent px-4 text-sm font-bold text-accent transition-colors hover:bg-accent hover:text-accent-ink">Pedir acesso</a>
       </nav>
+    </div>
     </header>
 
     <main class="mx-auto flex w-full max-w-6xl flex-1 flex-col justify-center px-4 py-16 lg:px-10">
@@ -46,6 +51,128 @@
       </div>
       <p class="mt-4 text-xs text-muted">O acesso só é activado depois de um administrador aprovar.</p>
     </main>
+
+    <section id="funcionalidades" class="secao">
+      <p class="login-rotulo">Funcionalidades</p>
+      <h2 class="secao-titulo">Tudo o que a renovação precisa, num só sítio.</h2>
+      <div class="secao-grelha">
+        <article class="secao-cartao">
+          <p class="num">01</p>
+          <h3>Alertas antes de expirar</h3>
+          <p>Email aos 60, 30 e 7 dias, sem repetir no mesmo ciclo, mais um resumo semanal ao gestor.</p>
+        </article>
+        <article class="secao-cartao">
+          <p class="num">02</p>
+          <h3>Painel e calendário</h3>
+          <p>O que está em atraso, o que expira em breve, a receita em jogo e a margem, sempre à vista.</p>
+        </article>
+        <article class="secao-cartao">
+          <p class="num">03</p>
+          <h3>Cada um no seu perfil</h3>
+          <p>Administrador, gestor comercial e técnico. O técnico só vê os serviços dos projectos dele.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="como-usar" class="secao">
+      <p class="login-rotulo">Como usar</p>
+      <h2 class="secao-titulo">Do pedido de acesso à renovação, em cinco passos.</h2>
+      <div class="passos" data-passos>
+        <ol class="passos-lista">
+          <li><button type="button" class="passo" data-passo="0"><span class="passo-n">1</span><span><b>Pedir acesso</b><small>Pedes acesso e um administrador aprova e atribui o teu perfil.</small></span></button></li>
+          <li><button type="button" class="passo" data-passo="1"><span class="passo-n">2</span><span><b>Ver o painel</b><small>Em atraso, a expirar em 7 e 30 dias, e a receita prevista.</small></span></button></li>
+          <li><button type="button" class="passo" data-passo="2"><span class="passo-n">3</span><span><b>Contactar o cliente</b><small>WhatsApp com a mensagem escrita e proforma em PDF, sem custo nem margem.</small></span></button></li>
+          <li><button type="button" class="passo" data-passo="3"><span class="passo-n">4</span><span><b>Registar a renovação</b><small>A nova data sai do ciclo do serviço. Também se renova em lote.</small></span></button></li>
+          <li><button type="button" class="passo" data-passo="4"><span class="passo-n">5</span><span><b>Acompanhar</b><small>Calendário das expirações e histórico de quem fez o quê.</small></span></button></li>
+        </ol>
+        <div class="passos-ecra">
+          <div class="mq" data-painel="0">
+            <div class="mq-barra"><i></i><i></i><i></i><span>Entrar</span></div>
+            <div class="mq-corpo mq-centro"><div class="mq-caixa">
+              <b>Painel de renovações</b>
+              <span class="mq-campo">email@exemplo.ao</span>
+              <span class="mq-campo">••••••••</span>
+              <span class="mq-btn">Entrar</span>
+              <small>Novo por aqui? Pedir acesso. O acesso só é activado depois de um administrador aprovar.</small>
+            </div></div>
+          </div>
+          <div class="mq" data-painel="1">
+            <div class="mq-barra"><i></i><i></i><i></i><span>Painel</span></div>
+            <div class="mq-corpo">
+              <div class="mq-stats">
+                <div class="mq-stat" style="--tom: var(--c-danger)"><span>Em atraso</span><b>3</b></div>
+                <div class="mq-stat" style="--tom: var(--c-warn)"><span>Vence em 7 dias</span><b>2</b></div>
+                <div class="mq-stat" style="--tom: var(--c-caution)"><span>Vence em 30 dias</span><b>6</b></div>
+                <div class="mq-stat" style="--tom: var(--c-ok)"><span>Receita prevista</span><b>473.000 Kz</b></div>
+              </div>
+              <div class="mq-barras" aria-hidden="true"><i style="--h:30"></i><i style="--h:45"></i><i style="--h:25"></i><i style="--h:70"></i><i style="--h:55"></i><i style="--h:85"></i><i style="--h:40"></i></div>
+            </div>
+          </div>
+          <div class="mq" data-painel="2">
+            <div class="mq-barra"><i></i><i></i><i></i><span>Domínio · Loja online</span></div>
+            <div class="mq-corpo">
+              <div class="mq-linha"><span class="mq-btn sec">Registar renovação</span><span class="mq-btn sec">Proforma PDF</span><span class="mq-btn">Avisar por WhatsApp</span></div>
+              <div class="mq-balao">Bom dia, Mercearia Girassol. O serviço Domínio do projecto Loja online expira a 03/12/2026. A renovação custa 18.000 Kz. Quer que renovemos?</div>
+              <div><span class="mq-chip" style="--tom: var(--c-accent)">Cliente contactado</span></div>
+            </div>
+          </div>
+          <div class="mq" data-painel="3">
+            <div class="mq-barra"><i></i><i></i><i></i><span>Registar renovação</span></div>
+            <div class="mq-corpo">
+              <div class="mq-form">
+                <div><span>Data da renovação</span>26/11/2026</div>
+                <div><span>Nova expiração (ciclo anual)</span>03/12/2027</div>
+                <div><span>Valor cobrado</span>18.000 Kz</div>
+              </div>
+              <div><span class="mq-btn">Registar renovação</span></div>
+              <div class="mq-ok">Renovação registada. O tratamento volta a "Por contactar".</div>
+            </div>
+          </div>
+          <div class="mq" data-painel="4">
+            <div class="mq-barra"><i></i><i></i><i></i><span>Calendário · Dezembro</span></div>
+            <div class="mq-corpo">
+              <div class="mq-cal" aria-hidden="true">
+                <i></i><i></i><i class="on" style="--tom: var(--c-warn)"></i><i></i><i></i><i></i><i></i>
+                <i></i><i></i><i></i><i class="on" style="--tom: var(--c-caution)"></i><i></i><i></i><i></i>
+                <i class="on" style="--tom: var(--c-ok)"></i><i></i><i></i><i></i><i class="on" style="--tom: var(--c-caution)"></i><i></i><i></i>
+              </div>
+              <ul class="mq-lista">
+                <li><b>Ana</b> · Renovou · Domínio · Loja online</li>
+                <li><b>Carlos</b> · Tratamento · Contactado → Proforma enviada</li>
+                <li><b>Ana</b> · Exportou · Serviços (CSV)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="contactos" class="secao">
+      <p class="login-rotulo">Contactos</p>
+      <h2 class="secao-titulo">Fala connosco.</h2>
+      <div class="contactos">
+        <ul class="contactos-lista">
+          {% if contacto_email %}<li><span class="login-rotulo">Email</span><a href="mailto:{{ contacto_email }}">{{ contacto_email }}</a></li>{% endif %}
+          {% if contacto_whatsapp %}<li><span class="login-rotulo">WhatsApp</span><a href="https://wa.me/{{ contacto_whatsapp }}" target="_blank" rel="noopener noreferrer">{{ contacto_whatsapp_texto }}</a></li>{% endif %}
+          <li><span class="login-rotulo">Código</span><a href="https://github.com/manuelmtidi-lab/renovacoes-web" target="_blank" rel="noopener noreferrer">github.com/manuelmtidi-lab/renovacoes-web</a></li>
+          <li><span class="login-rotulo">Localização</span><a href="https://www.google.com/maps/search/?api=1&query=Kinaxixi%2C+Luanda" target="_blank" rel="noopener noreferrer">Kinaxixi, Luanda</a></li>
+        </ul>
+        <form method="post" action="{% url 'contacto' %}" class="contacto-form">
+          {% csrf_token %}
+          <label>Nome<input name="nome" required maxlength="100" autocomplete="name"></label>
+          <label>Email<input type="email" name="email" required maxlength="200" autocomplete="email"></label>
+          <label>Mensagem<textarea name="mensagem" rows="4" required maxlength="1000"></textarea></label>
+          <div class="isco" aria-hidden="true"><label>Não preencher<input name="site" tabindex="-1" autocomplete="off"></label></div>
+          <button type="submit" class="contacto-btn">Enviar mensagem</button>
+          {% if request.GET.contacto == "ok" %}<p class="contacto-aviso" role="status">Mensagem enviada. Obrigado!</p>
+          {% elif request.GET.contacto == "limite" %}<p class="contacto-aviso erro" role="alert">Já enviaste várias mensagens. Tenta mais tarde.</p>
+          {% elif request.GET.contacto == "erro" %}<p class="contacto-aviso erro" role="alert">Não consegui enviar. Confirma os campos e tenta outra vez.</p>{% endif %}
+          <p class="contacto-nota">A mensagem segue por email e não fica guardada na aplicação. Usamos o teu email só para responder.</p>
+        </form>
+      </div>
+    </section>
+
+    <p class="rodape-nota">Projecto de estágio · dados de exemplo · acesso só para utilizadores aprovados.</p>
 
     <footer class="rodape-login mb-6">
       <div class="rodape-item">
@@ -60,6 +187,6 @@
   </div>
 
   <script src="{% static 'js/login-fundo.js' %}" defer></script>
-  <script src="{% static 'js/animacoes.js' %}?v=11" defer></script>
+  <script src="{% static 'js/animacoes.js' %}?v=13" defer></script>
 </body>
 </html>

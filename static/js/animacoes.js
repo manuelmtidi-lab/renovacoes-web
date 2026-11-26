@@ -420,3 +420,24 @@
     correr();
   }
 })();
+
+/* parte-10: passos (como usar) */
+(function () {
+  "use strict";
+  var raiz = document.querySelector("[data-passos]");
+  if (!raiz) return;
+  var botoes = [].slice.call(raiz.querySelectorAll("[data-passo]"));
+  var paineis = [].slice.call(raiz.querySelectorAll("[data-painel]"));
+  raiz.classList.add("passos-js");
+  function ir(i) {
+    botoes.forEach(function (b) {
+      if (b.getAttribute("data-passo") === String(i)) b.setAttribute("aria-current", "step");
+      else b.removeAttribute("aria-current");
+    });
+    paineis.forEach(function (p) { p.hidden = p.getAttribute("data-painel") !== String(i); });
+  }
+  botoes.forEach(function (b) {
+    b.addEventListener("click", function () { ir(b.getAttribute("data-passo")); });
+  });
+  ir(0);
+})();

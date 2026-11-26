@@ -78,4 +78,55 @@ def entrada(request):
     from django.contrib.messages import get_messages
     from django.shortcuts import render
     list(get_messages(request))
-    return render(request, "entrada.html")
+    return render(request, "entrada.html", _contactos())
+
+
+def _contactos():
+    from decouple import config
+    from .models import telefone_whatsapp
+    wa = telefone_whatsapp(config("CONTACTO_WHATSAPP", default=""))
+    texto = f"+{wa[:3]} {wa[3:6]} {wa[6:9]} {wa[9:]}" if len(wa) == 12 else (f"+{wa}" if wa else "")
+    return {
+        "contacto_email": config("CONTACTO_EMAIL", default=""),
+        "contacto_whatsapp": wa,
+        "contacto_whatsapp_texto": texto,
+    }
+
+
+def contacto(request):
+    """Formulário da página de entrada: envia email e não guarda nada."""
+    from decouple import config
+    from django.core.cache import cache
+    from django.core.exceptions import ValidationError
+    from django.core.mail import EmailMessage
+    from django.core.validators import validate_email
+    from django.shortcuts import redirect
+    if request.method != "POST":
+        return redirect("/#contactos")
+    if request.POST.get("site"):  # campo-isco: só os robôs o preenchem
+        return redirect("/?contacto=ok#contactos")
+    nome = request.POST.get("nome", "").strip()[:100]
+    email = request.POST.get("email", "").strip()[:200]
+    texto = request.POST.get("mensagem", "").strip()[:1000]
+    para = config("CONTACTO_EMAIL", default="")
+    try:
+        validate_email(email)
+    except ValidationError:
+        email = ""
+    if not (nome and email and texto and para):
+        return redirect("/?contacto=erro#contactos")
+    chave = f"contacto:{request.META.get('REMOTE_ADDR', '')}"
+    n = cache.get(chave, 0)
+    if n >= 3:
+        return redirect("/?contacto=limite#contactos")
+    cache.set(chave, n + 1, 3600)
+    try:
+        EmailMessage(
+            subject="[Renovações] Mensagem do site",
+            body=f"De: {nome} <{email}>\n\n{texto}",
+            to=[para],
+            reply_to=[email],
+        ).send()
+    except Exception:
+        return redirect("/?contacto=erro#contactos")
+    return redirect("/?contacto=ok#contactos")

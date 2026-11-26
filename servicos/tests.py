@@ -320,3 +320,43 @@ class CalendarioTests(BaseTest):
         self.client.force_login(self.tecnico)
         r = self.client.get(f"/calendario/?mes={meu.expira_em:%Y-%m}")
         self.assertEqual(r.context["total"], 1)
+
+
+class ContactoTests(BaseTest):
+    def setUp(self):
+        from django.core.cache import cache
+        cache.clear()
+
+    def _enviar(self, **extra):
+        from unittest.mock import patch
+        dados = {"nome": "Ana", "email": "ana@exemplo.ao", "mensagem": "Olá"}
+        dados.update(extra)
+        with patch("decouple.config", return_value="dono@exemplo.ao"):
+            return self.client.post("/contacto/", dados)
+
+    def test_envia_email(self):
+        from django.core import mail
+        r = self._enviar()
+        self.assertEqual(r["Location"], "/?contacto=ok#contactos")
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].reply_to, ["ana@exemplo.ao"])
+
+    def test_isco_nao_envia(self):
+        from django.core import mail
+        r = self._enviar(site="robo")
+        self.assertEqual(len(mail.outbox), 0)
+        self.assertIn("contacto=ok", r["Location"])
+
+    def test_email_invalido(self):
+        r = self._enviar(email="isto-nao-e-email")
+        self.assertIn("contacto=erro", r["Location"])
+
+    def test_limite_de_tres(self):
+        for _ in range(3):
+            self._enviar()
+        self.assertIn("contacto=limite", self._enviar()["Location"])
+
+    def test_pagina_de_entrada(self):
+        r = self.client.get("/")
+        self.assertEqual(r.status_code, 200)
+        self.assertContains(r, "Como usar")
