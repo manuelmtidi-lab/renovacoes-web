@@ -271,3 +271,32 @@ class ExportarCsvTests(BaseTest):
     def test_tecnico_nao_exporta(self):
         self.client.force_login(self.tecnico)
         self.assertEqual(self.client.get("/servicos/exportar/").status_code, 403)
+
+
+class LoteTests(BaseTest):
+    def _dados(self, a, b, nova_b=None):
+        from datetime import timedelta
+        from django.utils import timezone
+        return {
+            "ids": [a.pk, b.pk], "data": timezone.localdate().isoformat(),
+            f"nova_{a.pk}": (a.expira_em + timedelta(days=365)).isoformat(), f"valor_{a.pk}": "1000",
+            f"nova_{b.pk}": nova_b or (b.expira_em + timedelta(days=365)).isoformat(), f"valor_{b.pk}": "2000",
+        }
+
+    def test_lote_renova_todos(self):
+        a, b = novo_servico(self.projecto, 5), novo_servico(self.projecto2, 8)
+        self.client.force_login(self.gestor)
+        r = self.client.post("/servicos/lote/", self._dados(a, b))
+        self.assertEqual(r.status_code, 302)
+        self.assertEqual(a.renovacoes.count() + b.renovacoes.count(), 2)
+
+    def test_erro_num_nao_grava_nenhum(self):
+        a, b = novo_servico(self.projecto, 5), novo_servico(self.projecto, 8)
+        self.client.force_login(self.gestor)
+        r = self.client.post("/servicos/lote/", self._dados(a, b, nova_b=b.expira_em.isoformat()))
+        self.assertEqual(r.status_code, 200)
+        self.assertEqual(a.renovacoes.count() + b.renovacoes.count(), 0)
+
+    def test_tecnico_nao_pode(self):
+        self.client.force_login(self.tecnico)
+        self.assertEqual(self.client.get("/servicos/lote/").status_code, 403)

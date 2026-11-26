@@ -558,3 +558,53 @@ def servico_exportar(request):
         n += 1
     registar(request.user, "exportou", "Serviços (CSV)", f"{n} linhas")
     return resposta
+
+
+@exigir(*EDITAR)
+def servico_lote(request):
+    from datetime import date
+    from decimal import Decimal, InvalidOperation
+    from .models import cambio_actual, registar, somar_meses
+    origem = request.POST if request.method == "POST" else request.GET
+    ids = [i for i in (_int(x) for x in origem.getlist("ids")) if i][:50]
+    servicos = list(
+        servicos_visiveis(request).filter(pk__in=ids, estado=Servico.Estado.ACTIVO)
+        .select_related("projecto__cliente")
+    )
+    if not servicos:
+        messages.error(request, "Seleccione pelo menos um serviço activo.")
+        return redirect("servico_lista")
+
+    hoje = timezone.localdate()
+    data_txt = origem.get("data") or hoje.isoformat()
+    linhas, erros = [], False
+    for s in servicos:
+        if request.method == "POST":
+            nova, valor = origem.get(f"nova_{s.pk}", ""), origem.get(f"valor_{s.pk}", "")
+        else:
+            nova, valor = somar_meses(s.expira_em, s.ciclo).isoformat(), str(s.preco_venda)
+        form = RenovacaoForm({"data": data_txt, "valor": valor, "nova_expiracao": nova}, servico=s)
+        erro = ""
+        if request.method == "POST" and not form.is_valid():
+            erros = True
+            erro = " ".join(m for lista in form.errors.values() for m in lista)
+        linhas.append({"servico": s, "nova": nova, "valor": valor, "erro": erro})
+
+    if request.method == "POST" and not erros:
+        with transaction.atomic():
+            for l in linhas:
+                s = l["servico"]
+                nova = date.fromisoformat(l["nova"])
+                valor = Decimal(l["valor"])
+                Renovacao.objects.create(
+                    servico=s, data=date.fromisoformat(data_txt), valor=valor, nova_expiracao=nova,
+                    utilizador=request.user, custo=s.custo,
+                    cambio=cambio_actual() if s.moeda == Servico.Moeda.USD else None,
+                )
+                s.expira_em = nova
+                s.tratamento = Servico.Tratamento.POR_CONTACTAR
+                s.save(update_fields=["expira_em", "tratamento"])
+                registar(request.user, "renovou", s, f"em lote; nova expiração {nova:%d/%m/%Y}")
+        messages.success(request, f"{len(linhas)} renovação(ões) registada(s).")
+        return redirect("servico_lista")
+    return render(request, "servicos/lote.html", {"linhas": linhas, "data": data_txt})

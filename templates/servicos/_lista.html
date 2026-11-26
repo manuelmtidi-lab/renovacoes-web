@@ -1,8 +1,10 @@
 {# Parâmetro: servicos (lista de serviços com projecto e cliente carregados) #}
-<div class="cartao sem-brilho hidden md:block">
+<form method="get" action="{% url 'servico_lote' %}" class="hidden md:block">
+<div class="cartao sem-brilho">
   <table class="w-full text-left text-sm">
     <thead class="border-b border-line bg-surface-2">
       <tr>
+        {% if pode_editar %}<th class="w-10 px-5 py-2.5"></th>{% endif %}
         <th class="rotulo px-5 py-2.5">Serviço</th>
         <th class="rotulo px-5 py-2.5">Fornecedor</th>
         <th class="rotulo px-5 py-2.5">Expira</th>
@@ -13,6 +15,7 @@
     <tbody class="divide-y divide-line">
       {% for s in servicos %}
       <tr class="linha">
+        {% if pode_editar %}<td class="px-5 py-3">{% if s.estado == "activo" %}<input type="checkbox" name="ids" value="{{ s.pk }}" class="size-4 accent-[var(--c-accent)]" aria-label="Seleccionar">{% endif %}</td>{% endif %}
         <td class="px-5 py-3">
           <a href="{% url 'servico_detalhe' s.pk %}" class="font-bold transition-colors hover:text-accent">{{ s.get_tipo_display }}</a>
           <p class="text-muted">{{ s.projecto.nome }} · {{ s.projecto.cliente.nome }}</p>
@@ -34,6 +37,8 @@
     </tbody>
   </table>
 </div>
+{% if pode_editar %}<div class="mt-3"><button type="submit" class="btn">Renovar seleccionados</button></div>{% endif %}
+</form>
 
 <ul class="space-y-3 md:hidden">
   {% for s in servicos %}

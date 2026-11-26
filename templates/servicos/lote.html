@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Renovar em lote{% endblock %}
+
+{% block content %}
+<div class="animar-entrada">
+  <a href="{% url 'servico_lista' %}" class="text-sm text-muted transition-colors hover:text-ink">Serviços</a>
+  <h1 class="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">Renovar em lote</h1>
+  <p class="mt-1 text-muted">{{ linhas|length }} serviço{{ linhas|length|pluralize }}. A nova expiração vem do ciclo de cada um e pode ser alterada.</p>
+</div>
+
+<form method="post" action="{% url 'servico_lote' %}" class="mt-8">
+  {% csrf_token %}
+  <label class="block max-w-xs">
+    <span class="rotulo">Data da renovação</span>
+    <input type="date" name="data" value="{{ data }}" class="campo mt-1.5" required>
+  </label>
+
+  <div class="cartao sem-brilho mt-6 overflow-x-auto">
+    <table class="w-full text-left text-sm">
+      <thead class="border-b border-line bg-surface-2">
+        <tr>
+          <th class="rotulo px-5 py-2.5">Serviço</th>
+          <th class="rotulo px-5 py-2.5">Expira hoje em</th>
+          <th class="rotulo px-5 py-2.5">Nova expiração</th>
+          <th class="rotulo px-5 py-2.5">Valor (Kz)</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-line">
+        {% for l in linhas %}
+        <tr>
+          <td class="px-5 py-3">
+            <input type="hidden" name="ids" value="{{ l.servico.pk }}">
+            <p class="font-bold">{{ l.servico.get_tipo_display }}</p>
+            <p class="text-muted">{{ l.servico.projecto.nome }} · {{ l.servico.projecto.cliente.nome }}</p>
+          </td>
+          <td class="px-5 py-3 tabular-nums">{{ l.servico.expira_em|date:"d/m/Y" }}</td>
+          <td class="px-5 py-3">
+            <input type="date" name="nova_{{ l.servico.pk }}" value="{{ l.nova }}" class="campo" required>
+            {% if l.erro %}<p class="mt-1 text-sm text-danger">{{ l.erro }}</p>{% endif %}
+          </td>
+          <td class="px-5 py-3"><input type="number" name="valor_{{ l.servico.pk }}" value="{{ l.valor }}" min="0" step="0.01" class="campo" required></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="mt-6 flex gap-2">
+    <button type="submit" class="btn">Confirmar {{ linhas|length }} renovação(ões)</button>
+    <a href="{% url 'servico_lista' %}" class="btn">Cancelar</a>
+  </div>
+  <p class="mt-3 text-xs text-muted">Se um serviço tiver erro, nenhum é gravado.</p>
+</form>
+{% endblock %}
