@@ -58,6 +58,9 @@
         <a href="{% url 'servico_lista' %}" class="nav-item" {% if 'servico' in rota %}aria-current="page"{% endif %}>
           {% include "components/icone_extra.html" with nome="servicos" classe="size-[18px]" %} Serviços
         </a>
+        <a href="{% url 'calendario' %}" class="nav-item" {% if rota == 'calendario' %}aria-current="page"{% endif %}>
+          {% include "components/icon.html" with nome="calendario" classe="size-[18px]" %} Calendário
+        </a>
         {% endwith %}
         {% if user.is_staff %}
         <a href="{% url 'actividade' %}" class="nav-item" {% if request.resolver_match.url_name == 'actividade' %}aria-current="page"{% endif %}>

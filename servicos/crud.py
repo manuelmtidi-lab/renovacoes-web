@@ -608,3 +608,32 @@ def servico_lote(request):
         messages.success(request, f"{len(linhas)} renovação(ões) registada(s).")
         return redirect("servico_lista")
     return render(request, "servicos/lote.html", {"linhas": linhas, "data": data_txt})
+
+
+@login_required
+def calendario(request):
+    import calendar
+    from datetime import date
+    from .models import somar_meses
+    hoje = timezone.localdate()
+    try:
+        ano, mes = (int(x) for x in request.GET.get("mes", "").split("-"))
+        primeiro = date(ano, mes, 1)
+    except (ValueError, TypeError):
+        primeiro = hoje.replace(day=1)
+    qs = servicos_visiveis(request).filter(
+        estado=Servico.Estado.ACTIVO, expira_em__year=primeiro.year, expira_em__month=primeiro.month
+    ).select_related("projecto__cliente")
+    por_dia = {}
+    for x in qs:
+        por_dia.setdefault(x.expira_em.day, []).append(x)
+    semanas = [
+        [{"dia": d, "servicos": por_dia.get(d, []), "hoje": bool(d) and date(primeiro.year, primeiro.month, d) == hoje}
+         for d in sem]
+        for sem in calendar.Calendar(0).monthdayscalendar(primeiro.year, primeiro.month)
+    ]
+    return render(request, "calendario.html", _contexto(
+        request, semanas=semanas, primeiro=primeiro, total=qs.count(),
+        anterior=somar_meses(primeiro, -1), seguinte=somar_meses(primeiro, 1),
+        dias_com=[c for sem in semanas for c in sem if c["servicos"]],
+    ))

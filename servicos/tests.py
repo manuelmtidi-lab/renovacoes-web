@@ -300,3 +300,23 @@ class LoteTests(BaseTest):
     def test_tecnico_nao_pode(self):
         self.client.force_login(self.tecnico)
         self.assertEqual(self.client.get("/servicos/lote/").status_code, 403)
+
+
+class CalendarioTests(BaseTest):
+    def test_mostra_servico_do_mes(self):
+        s = novo_servico(self.projecto, 3)
+        self.client.force_login(self.gestor)
+        r = self.client.get(f"/calendario/?mes={s.expira_em:%Y-%m}")
+        self.assertEqual(r.status_code, 200)
+        self.assertEqual(r.context["total"], 1)
+
+    def test_mes_invalido_nao_rebenta(self):
+        self.client.force_login(self.gestor)
+        self.assertEqual(self.client.get("/calendario/?mes=abc").status_code, 200)
+
+    def test_tecnico_so_ve_os_seus(self):
+        meu = novo_servico(self.projecto, 3)
+        novo_servico(self.projecto2, 3)
+        self.client.force_login(self.tecnico)
+        r = self.client.get(f"/calendario/?mes={meu.expira_em:%Y-%m}")
+        self.assertEqual(r.context["total"], 1)
